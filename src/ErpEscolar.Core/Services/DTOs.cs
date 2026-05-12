@@ -23,7 +23,7 @@ public record AttendanceBatchRequest(Guid ClassId, Guid? SubjectId, DateTime Dat
 
 public record StudentResponse(
     Guid Id, string Name, string Email, string Enrollment,
-    string? ClassName, string Status, string? GuardianName
+    Guid? ClassId, string? ClassName, string Status, string? GuardianName
 );
 
 public record TeacherResponse(

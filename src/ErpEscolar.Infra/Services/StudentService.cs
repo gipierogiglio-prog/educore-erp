@@ -20,7 +20,7 @@ public class StudentService : IStudentService
         var students = await _studentRepo.GetAllAsync();
         return students.Select(s => new StudentResponse(
             s.Id, s.User.Name, s.User.Email, s.Enrollment,
-            s.Class?.Name, s.Active ? "Ativo" : "Inativo",
+            s.ClassId, s.Class?.Name, s.Active ? "Ativo" : "Inativo",
             s.Guardian?.User?.Name
         )).ToList();
     }
@@ -30,7 +30,7 @@ public class StudentService : IStudentService
         var s = await _studentRepo.GetByIdAsync(id);
         if (s == null) return null;
         return new StudentResponse(s.Id, s.User.Name, s.User.Email, s.Enrollment,
-            s.Class?.Name, s.Active ? "Ativo" : "Inativo", s.Guardian?.User?.Name);
+            s.ClassId, s.Class?.Name, s.Active ? "Ativo" : "Inativo", s.Guardian?.User?.Name);
     }
 
     public async Task<StudentResponse> CreateAsync(CreateStudentRequest request)
@@ -78,7 +78,7 @@ public class StudentService : IStudentService
 
         student = await _studentRepo.CreateAsync(student);
         return new StudentResponse(student.Id, user.Name, user.Email, enrollment,
-            null, "Ativo", guardian?.User?.Name);
+            student.ClassId, null, "Ativo", guardian?.User?.Name);
     }
 
     public async Task<bool> ToggleStatusAsync(Guid id)
@@ -88,5 +88,15 @@ public class StudentService : IStudentService
         student.Active = !student.Active;
         await _studentRepo.UpdateAsync(student);
         return student.Active;
+    }
+
+    public async Task UpdateClassAsync(Guid studentId, Guid? classId)
+    {
+        var student = await _studentRepo.GetByIdAsync(studentId);
+        if (student == null)
+            throw new KeyNotFoundException("Aluno não encontrado");
+
+        student.ClassId = classId;
+        await _studentRepo.UpdateAsync(student);
     }
 }

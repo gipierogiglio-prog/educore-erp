@@ -11,6 +11,7 @@ namespace ErpEscolar.Api.Controllers;
 public class StudentsController : ControllerBase
 {
     private readonly IStudentService _service;
+
     public StudentsController(IStudentService service) => _service = service;
 
     [HttpGet]
@@ -49,4 +50,20 @@ public class StudentsController : ControllerBase
         if (active == null) return NotFound();
         return Ok(new { active });
     }
+
+    [HttpPatch("{id}/class")]
+    public async Task<IActionResult> UpdateClass(Guid id, [FromBody] UpdateClassRequest request)
+    {
+        try
+        {
+            await _service.UpdateClassAsync(id, request.ClassId);
+            return Ok(new { message = "Turma atualizada" });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
 }
+
+public record UpdateClassRequest(Guid? ClassId);

@@ -12,6 +12,7 @@ public interface IStudentService
     Task<Services.StudentResponse?> GetByIdAsync(Guid id);
     Task<Services.StudentResponse> CreateAsync(Services.CreateStudentRequest request);
     Task<bool> ToggleStatusAsync(Guid id);
+    Task UpdateClassAsync(Guid studentId, Guid? classId);
 }
 
 public interface ITeacherService
