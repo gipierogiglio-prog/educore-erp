@@ -1,0 +1,14 @@
+[providers]
+dotnet = true
+
+[phases.setup]
+nixPkgs = ["dotnet-sdk_8"]
+
+[phases.install]
+cmds = ["dotnet restore erp-escolar.sln"]
+
+[phases.build]
+cmds = ["dotnet publish src/ErpEscolar.Api/ErpEscolar.Api.csproj -c Release -o /app/dist"]
+
+[start.start]
+cmd = "dotnet /app/dist/ErpEscolar.Api.dll"
