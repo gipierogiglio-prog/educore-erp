@@ -1,6 +1,6 @@
 const API = import.meta.env.VITE_API_URL || '/api'
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const token = localStorage.getItem('token')
   const headers: Record<string, string> = { 'Content-Type': 'application/json' }
   if (token) headers['Authorization'] = `Bearer ${token}`
@@ -20,44 +20,44 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const api = {
   auth: {
     login: (email: string, password: string) =>
-      request<{ token: string; name: string; role: string }>('/auth/login', {
+      apiFetch<{ token: string; name: string; role: string }>('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
-    me: () => request<{ id: string; name: string; email: string; role: string }>('/auth/me'),
+    me: () => apiFetch<{ id: string; name: string; email: string; role: string }>('/auth/me'),
   },
 
   students: {
-    list: () => request<any[]>('/students'),
-    getById: (id: string) => request<any>(`/students/${id}`),
+    list: () => apiFetch<any[]>('/students'),
+    getById: (id: string) => apiFetch<any>(`/students/${id}`),
     create: (data: any) =>
-      request<any>('/students', { method: 'POST', body: JSON.stringify(data) }),
+      apiFetch<any>('/students', { method: 'POST', body: JSON.stringify(data) }),
     toggleStatus: (id: string) =>
-      request<any>(`/students/${id}/toggle-status`, { method: 'PATCH' }),
+      apiFetch<any>(`/students/${id}/toggle-status`, { method: 'PATCH' }),
   },
 
   academic: {
     classes: {
-      list: () => request<any[]>('/academic/classes'),
+      list: () => apiFetch<any[]>('/academic/classes'),
       create: (data: { name: string; shift: string; room?: string }) =>
-        request<any>('/academic/classes', { method: 'POST', body: JSON.stringify(data) }),
+        apiFetch<any>('/academic/classes', { method: 'POST', body: JSON.stringify(data) }),
     },
     subjects: {
-      list: () => request<any[]>('/academic/subjects'),
+      list: () => apiFetch<any[]>('/academic/subjects'),
       create: (data: { name: string; code: string; workload: number }) =>
-        request<any>('/academic/subjects', { method: 'POST', body: JSON.stringify(data) }),
+        apiFetch<any>('/academic/subjects', { method: 'POST', body: JSON.stringify(data) }),
     },
     assignTeacher: (data: { teacherId: string; subjectId: string; classId: string }) =>
-      request<any>('/academic/assign-teacher', { method: 'POST', body: JSON.stringify(data) }),
+      apiFetch<any>('/academic/assign-teacher', { method: 'POST', body: JSON.stringify(data) }),
     grades: {
       getByClass: (classId: string, bimester: number, year?: number) =>
-        request<any[]>(`/academic/grades/${classId}?bimester=${bimester}&year=${year ?? new Date().getFullYear()}`),
+        apiFetch<any[]>(`/academic/grades/${classId}?bimester=${bimester}&year=${year ?? new Date().getFullYear()}`),
       submit: (data: any) =>
-        request<any>('/academic/grades/batch', { method: 'POST', body: JSON.stringify(data) }),
+        apiFetch<any>('/academic/grades/batch', { method: 'POST', body: JSON.stringify(data) }),
     },
     attendance: {
       submit: (data: any) =>
-        request<any>('/academic/attendance/batch', { method: 'POST', body: JSON.stringify(data) }),
+        apiFetch<any>('/academic/attendance/batch', { method: 'POST', body: JSON.stringify(data) }),
     },
   },
 }

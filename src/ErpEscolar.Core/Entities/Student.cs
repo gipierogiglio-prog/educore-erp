@@ -17,4 +17,5 @@ public class Student
     public ICollection<Grade> Grades { get; set; } = new List<Grade>();
     public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();
     public ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+    public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 }

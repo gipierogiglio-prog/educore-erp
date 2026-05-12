@@ -36,6 +36,15 @@ public record SubjectResponse(Guid Id, string Name, string Code, int Workload);
 
 public record GradeResponse(Guid StudentId, string StudentName, int Bimester, decimal Value, decimal? Recovery);
 
+public record EnrollmentResponse(
+    Guid Id, Guid StudentId, string StudentName, string StudentEnrollment,
+    Guid ClassId, string ClassName, int SchoolYear, string Status, DateTime EnrollmentDate
+);
+
+public record CreateEnrollmentRequest(
+    Guid StudentId, Guid ClassId, int? SchoolYear, string? Notes
+);
+
 public record DashboardData(
     int TotalStudents, int TotalTeachers, int TotalClasses,
     int PendingInvoices, decimal MonthlyRevenue, decimal OverdueAmount

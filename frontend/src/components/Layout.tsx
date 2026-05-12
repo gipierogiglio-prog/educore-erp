@@ -14,6 +14,7 @@ const navItems = [
   { href: '/teachers', label: 'Professores', icon: GraduationCap },
   { href: '/classes', label: 'Turmas', icon: School },
   { href: '/subjects', label: 'Disciplinas', icon: BookOpen },
+  { href: '/enrollments', label: 'Matrículas', icon: Users },
   { href: '/grades', label: 'Notas', icon: ClipboardList },
   { href: '/financial', label: 'Financeiro', icon: DollarSign },
 ]

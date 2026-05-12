@@ -178,6 +178,41 @@ public class AttendanceRepository : IAttendanceRepository
     }
 }
 
+public class EnrollmentRepository : IEnrollmentRepository
+{
+    private readonly AppDbContext _db;
+    public EnrollmentRepository(AppDbContext db) => _db = db;
+
+    public async Task<Enrollment?> GetByIdAsync(Guid id) =>
+        await _db.Enrollments.Include(e => e.Student).ThenInclude(s => s.User)
+            .Include(e => e.Class).FirstOrDefaultAsync(e => e.Id == id);
+
+    public async Task<List<Enrollment>> GetByStudentAsync(Guid studentId) =>
+        await _db.Enrollments.Include(e => e.Class)
+            .Where(e => e.StudentId == studentId).OrderByDescending(e => e.SchoolYear).ToListAsync();
+
+    public async Task<List<Enrollment>> GetByClassAsync(Guid classId) =>
+        await _db.Enrollments.Include(e => e.Student).ThenInclude(s => s.User)
+            .Where(e => e.ClassId == classId).ToListAsync();
+
+    public async Task<List<Enrollment>> GetAllAsync(int? year = null)
+    {
+        var query = _db.Enrollments.Include(e => e.Student).ThenInclude(s => s.User)
+            .Include(e => e.Class).AsQueryable();
+        if (year.HasValue) query = query.Where(e => e.SchoolYear == year.Value);
+        return await query.OrderByDescending(e => e.SchoolYear).ThenBy(e => e.Student.User.Name).ToListAsync();
+    }
+
+    public async Task<Enrollment> CreateAsync(Enrollment enrollment)
+    {
+        _db.Enrollments.Add(enrollment);
+        await _db.SaveChangesAsync();
+        return enrollment;
+    }
+
+    public async Task UpdateAsync(Enrollment enrollment) => await _db.SaveChangesAsync();
+}
+
 public class InvoiceRepository : IInvoiceRepository
 {
     private readonly AppDbContext _db;

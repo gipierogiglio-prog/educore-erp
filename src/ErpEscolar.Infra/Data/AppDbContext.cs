@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<Attendance> Attendances => Set<Attendance>();
     public DbSet<TuitionPlan> TuitionPlans => Set<TuitionPlan>();
     public DbSet<Invoice> Invoices => Set<Invoice>();
+    public DbSet<Enrollment> Enrollments => Set<Enrollment>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,6 +98,16 @@ public class AppDbContext : DbContext
             e.HasKey(i => i.Id);
             e.Property(i => i.Value).HasColumnType("decimal(10,2)");
             e.Property(i => i.Status).HasMaxLength(20).IsRequired();
+        });
+
+        // Enrollment
+        modelBuilder.Entity<Enrollment>(e =>
+        {
+            e.HasKey(en => en.Id);
+            e.HasIndex(en => new { en.StudentId, en.ClassId, en.SchoolYear }).IsUnique();
+            e.Property(en => en.Status).HasMaxLength(20).IsRequired();
+            e.HasOne(en => en.Student).WithMany(s => s.Enrollments).HasForeignKey(en => en.StudentId);
+            e.HasOne(en => en.Class).WithMany(c => c.Enrollments).HasForeignKey(en => en.ClassId);
         });
 
         // TuitionPlan
