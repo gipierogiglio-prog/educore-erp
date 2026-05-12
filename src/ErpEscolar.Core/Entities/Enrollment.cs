@@ -6,6 +6,8 @@ public class Enrollment
     public Guid StudentId { get; set; }
     public Guid ClassId { get; set; }
     public int SchoolYear { get; set; } = DateTime.UtcNow.Year;
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
     public string Status { get; set; } = "active"; // active, transferred, completed, cancelled
     public DateTime? EndDate { get; set; }

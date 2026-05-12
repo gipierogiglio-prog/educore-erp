@@ -20,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<Invoice> Invoices => Set<Invoice>();
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
     public DbSet<SchoolYear> SchoolYears => Set<SchoolYear>();
+    public DbSet<Organization> Organizations => Set<Organization>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -99,6 +100,20 @@ public class AppDbContext : DbContext
             e.HasKey(i => i.Id);
             e.Property(i => i.Value).HasColumnType("decimal(10,2)");
             e.Property(i => i.Status).HasMaxLength(20).IsRequired();
+        });
+
+        // Organization
+        modelBuilder.Entity<Organization>(e =>
+        {
+            e.HasKey(o => o.Id);
+            e.HasIndex(o => o.Slug).IsUnique();
+            e.Property(o => o.Status).HasMaxLength(20).IsRequired();
+        });
+
+        // User -> Organization
+        modelBuilder.Entity<User>(e =>
+        {
+            e.HasOne(u => u.Organization).WithMany().HasForeignKey(u => u.OrganizationId).OnDelete(DeleteBehavior.SetNull);
         });
 
         // SchoolYear

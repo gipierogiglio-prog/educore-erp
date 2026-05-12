@@ -39,9 +39,10 @@ public class StudentRepository : IStudentRepository
         await _db.Students.Include(s => s.User).Include(s => s.Class).Include(s => s.Guardian).ThenInclude(g => g!.User)
             .FirstOrDefaultAsync(s => s.Id == id);
 
-    public async Task<List<Student>> GetAllAsync(bool activeOnly = true)
+    public async Task<List<Student>> GetAllAsync(Guid orgId, bool activeOnly = true)
     {
-        var query = _db.Students.Include(s => s.User).Include(s => s.Class).AsQueryable();
+        var query = _db.Students.Include(s => s.User).Include(s => s.Class)
+            .Where(s => s.OrganizationId == orgId).AsQueryable();
         if (activeOnly) query = query.Where(s => s.Active);
         return await query.OrderBy(s => s.User.Name).ToListAsync();
     }

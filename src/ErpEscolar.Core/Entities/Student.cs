@@ -7,6 +7,8 @@ public class Student
     public Guid UserId { get; set; }
     public Guid? ClassId { get; set; }
     public Guid? GuardianId { get; set; }
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
     public bool Active { get; set; } = true;
 

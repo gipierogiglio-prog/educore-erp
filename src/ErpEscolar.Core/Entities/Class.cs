@@ -6,6 +6,8 @@ public class Class
     public string Name { get; set; } = string.Empty; // e.g., "3º Ano A"
     public string Shift { get; set; } = "morning";
     public int Year { get; set; } = DateTime.UtcNow.Year;
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public string? Room { get; set; }
     public bool Active { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

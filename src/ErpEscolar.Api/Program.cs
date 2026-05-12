@@ -97,6 +97,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 
 var app = builder.Build();
@@ -107,6 +108,20 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 
+    // Seed default organization
+    var defaultOrg = db.Organizations.FirstOrDefault();
+    if (defaultOrg == null)
+    {
+        defaultOrg = new ErpEscolar.Core.Entities.Organization
+        {
+            Name = "Escola Demo",
+            Slug = "escola-demo",
+            Status = "active",
+        };
+        db.Organizations.Add(defaultOrg);
+        db.SaveChanges();
+    }
+
     // Seed admin user
     if (!db.Users.Any())
     {
@@ -115,7 +130,8 @@ using (var scope = app.Services.CreateScope())
             Name = "Administrador",
             Email = "admin@escola.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
-            Role = "admin",
+            Role = "org_admin",
+            OrganizationId = defaultOrg.Id,
         };
         db.Users.Add(admin);
 
@@ -126,6 +142,7 @@ using (var scope = app.Services.CreateScope())
             Email = "professor@escola.com",
             PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
             Role = "teacher",
+            OrganizationId = defaultOrg.Id,
         };
         db.Users.Add(teacher);
         db.SaveChanges();

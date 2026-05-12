@@ -11,6 +11,8 @@ public class Invoice
     public string Status { get; set; } = "pending";
     public DateTime? PaidAt { get; set; }
     public string? PaymentMethod { get; set; }
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public string? ExternalReference { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

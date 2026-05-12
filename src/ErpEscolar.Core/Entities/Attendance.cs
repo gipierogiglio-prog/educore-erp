@@ -8,6 +8,8 @@ public class Attendance
     public Guid? SubjectId { get; set; }
     public DateTime Date { get; set; }
     public bool Present { get; set; }
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public string? Justification { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

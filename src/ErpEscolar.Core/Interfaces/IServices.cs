@@ -8,9 +8,9 @@ public interface IAuthService
 
 public interface IStudentService
 {
-    Task<List<Services.StudentResponse>> GetAllAsync();
+    Task<List<Services.StudentResponse>> GetAllAsync(Guid orgId);
     Task<Services.StudentResponse?> GetByIdAsync(Guid id);
-    Task<Services.StudentResponse> CreateAsync(Services.CreateStudentRequest request);
+    Task<Services.StudentResponse> CreateAsync(Services.CreateStudentRequest request, Guid orgId);
     Task<bool> ToggleStatusAsync(Guid id);
     Task UpdateClassAsync(Guid studentId, Guid? classId);
 }

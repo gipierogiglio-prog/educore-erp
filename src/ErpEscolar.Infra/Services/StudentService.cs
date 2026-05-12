@@ -15,9 +15,9 @@ public class StudentService : IStudentService
         _userRepo = userRepo;
     }
 
-    public async Task<List<StudentResponse>> GetAllAsync()
+    public async Task<List<StudentResponse>> GetAllAsync(Guid orgId)
     {
-        var students = await _studentRepo.GetAllAsync();
+        var students = await _studentRepo.GetAllAsync(orgId);
         return students.Select(s => new StudentResponse(
             s.Id, s.User.Name, s.User.Email, s.Enrollment,
             s.ClassId, s.Class?.Name, s.Active ? "Ativo" : "Inativo",
@@ -33,7 +33,7 @@ public class StudentService : IStudentService
             s.ClassId, s.Class?.Name, s.Active ? "Ativo" : "Inativo", s.Guardian?.User?.Name);
     }
 
-    public async Task<StudentResponse> CreateAsync(CreateStudentRequest request)
+    public async Task<StudentResponse> CreateAsync(CreateStudentRequest request, Guid orgId)
     {
         var existingUser = await _userRepo.GetByEmailAsync(request.Email);
         if (existingUser != null)
@@ -74,6 +74,7 @@ public class StudentService : IStudentService
             Enrollment = enrollment,
             ClassId = request.ClassId,
             GuardianId = guardian?.Id,
+            OrganizationId = orgId,
         };
 
         student = await _studentRepo.CreateAsync(student);

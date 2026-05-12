@@ -13,7 +13,7 @@ public interface IUserRepository
 public interface IStudentRepository
 {
     Task<Student?> GetByIdAsync(Guid id);
-    Task<List<Student>> GetAllAsync(bool activeOnly = true);
+    Task<List<Student>> GetAllAsync(Guid orgId, bool activeOnly = true);
     Task<List<Student>> GetByClassIdAsync(Guid classId);
     Task<Student> CreateAsync(Student student);
     Task UpdateAsync(Student student);

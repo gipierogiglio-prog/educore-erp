@@ -8,6 +8,8 @@ public class Grade
     public int Bimester { get; set; }
     public decimal Value { get; set; }
     public decimal? RecoveryValue { get; set; }
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public int SchoolYear { get; set; } = DateTime.UtcNow.Year;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? UpdatedAt { get; set; }

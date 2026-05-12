@@ -5,6 +5,8 @@ public class Teacher
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }
     public string? Specialization { get; set; }
+    public Guid OrganizationId { get; set; }
+    public Organization Organization { get; set; } = null!;
     public DateTime HireDate { get; set; } = DateTime.UtcNow;
     public bool Active { get; set; } = true;
 
