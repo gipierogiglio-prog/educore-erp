@@ -59,6 +59,15 @@ public interface IAttendanceRepository
     Task CreateBatchAsync(List<Attendance> attendances);
 }
 
+public interface ISchoolYearRepository
+{
+    Task<List<SchoolYear>> GetAllAsync();
+    Task<SchoolYear?> GetByIdAsync(Guid id);
+    Task<SchoolYear?> GetByYearAsync(int year);
+    Task<SchoolYear> CreateAsync(SchoolYear schoolYear);
+    Task UpdateAsync(SchoolYear schoolYear);
+}
+
 public interface IEnrollmentRepository
 {
     Task<Enrollment?> GetByIdAsync(Guid id);

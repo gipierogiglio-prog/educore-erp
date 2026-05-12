@@ -8,6 +8,7 @@ import Teachers from '@/pages/Teachers'
 import Classes from '@/pages/Classes'
 import Subjects from '@/pages/Subjects'
 import Enrollments from '@/pages/Enrollments'
+import SchoolYears from '@/pages/SchoolYears'
 import { ReactNode } from 'react'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/classes" element={<ProtectedRoute><Classes /></ProtectedRoute>} />
           <Route path="/subjects" element={<ProtectedRoute><Subjects /></ProtectedRoute>} />
           <Route path="/enrollments" element={<ProtectedRoute><Enrollments /></ProtectedRoute>} />
+          <Route path="/school-years" element={<ProtectedRoute><SchoolYears /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AuthProvider>

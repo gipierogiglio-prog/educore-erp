@@ -41,6 +41,14 @@ public record EnrollmentResponse(
     Guid ClassId, string ClassName, int SchoolYear, string Status, DateTime EnrollmentDate
 );
 
+public record SchoolYearResponse(
+    Guid Id, int Year, string? Description, DateTime StartDate, DateTime EndDate, string Status
+);
+
+public record CreateSchoolYearRequest(
+    int Year, DateTime StartDate, DateTime EndDate, string? Description
+);
+
 public record CreateEnrollmentRequest(
     Guid StudentId, Guid ClassId, int? SchoolYear, string? Notes
 );

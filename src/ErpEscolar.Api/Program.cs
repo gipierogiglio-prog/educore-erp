@@ -61,6 +61,10 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IAcademicService, AcademicService>();
 
+// SchoolYear
+builder.Services.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
+builder.Services.AddScoped<ISchoolYearService, SchoolYearService>();
+
 // Enrollment
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();

@@ -178,6 +178,30 @@ public class AttendanceRepository : IAttendanceRepository
     }
 }
 
+public class SchoolYearRepository : ISchoolYearRepository
+{
+    private readonly AppDbContext _db;
+    public SchoolYearRepository(AppDbContext db) => _db = db;
+
+    public async Task<List<SchoolYear>> GetAllAsync() =>
+        await _db.SchoolYears.OrderByDescending(sy => sy.Year).ToListAsync();
+
+    public async Task<SchoolYear?> GetByIdAsync(Guid id) =>
+        await _db.SchoolYears.FindAsync(id);
+
+    public async Task<SchoolYear?> GetByYearAsync(int year) =>
+        await _db.SchoolYears.FirstOrDefaultAsync(sy => sy.Year == year);
+
+    public async Task<SchoolYear> CreateAsync(SchoolYear schoolYear)
+    {
+        _db.SchoolYears.Add(schoolYear);
+        await _db.SaveChangesAsync();
+        return schoolYear;
+    }
+
+    public async Task UpdateAsync(SchoolYear schoolYear) => await _db.SaveChangesAsync();
+}
+
 public class EnrollmentRepository : IEnrollmentRepository
 {
     private readonly AppDbContext _db;

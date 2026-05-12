@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { cn } from '@/lib/utils'
 import {
-  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList,
+  LayoutDashboard, Users, GraduationCap, BookOpen, ClipboardList, Calendar,
   DollarSign, LogOut, Menu, X, School,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/classes', label: 'Turmas', icon: School },
   { href: '/subjects', label: 'Disciplinas', icon: BookOpen },
   { href: '/enrollments', label: 'Matrículas', icon: Users },
+  { href: '/school-years', label: 'Anos Letivos', icon: Calendar },
   { href: '/grades', label: 'Notas', icon: ClipboardList },
   { href: '/financial', label: 'Financeiro', icon: DollarSign },
 ]

@@ -41,6 +41,14 @@ public interface IFinancialService
     Task GenerateMonthlyInvoicesAsync(int year, int month);
 }
 
+public interface ISchoolYearService
+{
+    Task<List<Services.SchoolYearResponse>> GetAllAsync();
+    Task<Services.SchoolYearResponse?> GetByIdAsync(Guid id);
+    Task<Services.SchoolYearResponse> CreateAsync(Services.CreateSchoolYearRequest request);
+    Task UpdateStatusAsync(Guid id, string status);
+}
+
 public interface IEnrollmentService
 {
     Task<List<Services.EnrollmentResponse>> GetAllAsync(int? year = null);
