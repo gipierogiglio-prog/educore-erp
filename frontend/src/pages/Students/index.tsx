@@ -22,10 +22,18 @@ export default function Students() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    await api.students.create(form)
-    setShowForm(false)
-    setForm({ name: '', email: '', password: '123456', phone: '', classId: '' })
-    load()
+    try {
+      // Remove campos vazios antes de enviar
+      const payload = Object.fromEntries(
+        Object.entries(form).filter(([_, v]) => v !== '')
+      )
+      await api.students.create(payload)
+      setShowForm(false)
+      setForm({ name: '', email: '', password: '123456', phone: '', classId: '' })
+      load()
+    } catch (err: any) {
+      alert(err.message || 'Erro ao salvar aluno')
+    }
   }
 
   return (
