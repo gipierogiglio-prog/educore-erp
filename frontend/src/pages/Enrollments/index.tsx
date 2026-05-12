@@ -12,7 +12,10 @@ export default function Enrollments() {
   const [classes, setClasses] = useState<any[]>([])
   const [search, setSearch] = useState('')
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState({ studentId: '', classId: '', schoolYear: new Date().getFullYear(), notes: '' })
+  const [form, setForm] = useState({ studentId: '', studentName: '', classId: '', schoolYear: new Date().getFullYear(), notes: '' })
+  const [studentSearch, setStudentSearch] = useState('')
+  const [showStudentList, setShowStudentList] = useState(false)
+  const [selectedStudentName, setSelectedStudentName] = useState('')
   const [yearFilter, setYearFilter] = useState(new Date().getFullYear())
 
   useEffect(() => {
@@ -24,15 +27,15 @@ export default function Enrollments() {
   const load = () => {
     apiFetch(`/enrollments?year=${yearFilter}`).then(setEnrollments).catch(() => {})
   }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const payload = { ...form, schoolYear: Number(form.schoolYear) }
-      if (!payload.studentId || !payload.classId) { alert('Selecione aluno e turma'); return }
+      if (!form.studentId || !form.classId) { alert('Selecione aluno e turma'); return }
+      const payload = { studentId: form.studentId, classId: form.classId, schoolYear: Number(form.schoolYear), notes: form.notes || undefined }
       await apiFetch('/enrollments', { method: 'POST', body: JSON.stringify(payload) })
       setShowForm(false)
-      setForm({ studentId: '', classId: '', schoolYear: new Date().getFullYear(), notes: '' })
+      setForm({ studentId: '', studentName: '', classId: '', schoolYear: new Date().getFullYear(), notes: '' })
+      setSelectedStudentName('')
       load()
     } catch (err: any) { alert(err.message || 'Erro ao matricular') }
   }
@@ -71,14 +74,70 @@ export default function Enrollments() {
           <CardHeader><CardTitle>Nova Matrícula</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              {/* Student search */}
+              <div style={{ position: 'relative' }}>
                 <label className="text-sm font-medium mb-1 block">Aluno</label>
-                <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
-                  value={form.studentId} onChange={e => setForm({ ...form, studentId: e.target.value })} required>
-                  <option value="">Selecione...</option>
-                  {students.map(s => <option key={s.id} value={s.id}>{s.name} ({s.enrollment})</option>)}
-                </select>
+                <Input
+                  placeholder="Buscar por nome ou matrícula..."
+                  value={studentSearch}
+                  onChange={e => {
+                    setStudentSearch(e.target.value)
+                    setShowStudentList(true)
+                    setForm({ ...form, studentId: '', studentName: '' })
+                    setSelectedStudentName('')
+                  }}
+                  onFocus={() => setShowStudentList(true)}
+                  required={!form.studentId}
+                />
+                {selectedStudentName && (
+                  <div className="mt-1 text-xs text-green-600 font-medium">
+                    ✅ {selectedStudentName}
+                  </div>
+                )}
+                {showStudentList && studentSearch && (
+                  <div style={{
+                    position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+                    maxHeight: 200, overflowY: 'auto',
+                    background: 'white', border: '1px solid #e2e8f0', borderRadius: '0 0 8px 8px',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}>
+                    {students
+                      .filter(s =>
+                        s.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                        s.enrollment.toLowerCase().includes(studentSearch.toLowerCase())
+                      )
+                      .slice(0, 10)
+                      .map(s => (
+                        <div key={s.id}
+                          onClick={() => {
+                            setForm({ ...form, studentId: s.id, studentName: s.name })
+                            setSelectedStudentName(`${s.name} (${s.enrollment})`)
+                            setStudentSearch('')
+                            setShowStudentList(false)
+                          }}
+                          style={{
+                            padding: '8px 12px', cursor: 'pointer', fontSize: '0.875rem',
+                            borderBottom: '1px solid #f1f5f9'
+                          }}
+                          onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'white')}
+                        >
+                          <span className="font-medium">{s.name}</span>
+                          <span className="text-gray-400 ml-2 text-xs">{s.enrollment}</span>
+                        </div>
+                      ))}
+                    {students.filter(s =>
+                      s.name.toLowerCase().includes(studentSearch.toLowerCase()) ||
+                      s.enrollment.toLowerCase().includes(studentSearch.toLowerCase())
+                    ).length === 0 && (
+                      <div style={{ padding: '8px 12px', color: '#94a3b8', fontSize: '0.875rem' }}>
+                        Nenhum aluno encontrado
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
+              {/* Class select */}
               <div>
                 <label className="text-sm font-medium mb-1 block">Turma</label>
                 <select className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
