@@ -27,6 +27,13 @@ export const api = {
     me: () => apiFetch<{ id: string; name: string; email: string; role: string }>('/auth/me'),
   },
 
+  teachers: {
+    list: () => apiFetch<any[]>('/teachers'),
+    getById: (id: string) => apiFetch<any>(`/teachers/${id}`),
+    create: (data: any) =>
+      apiFetch<any>('/teachers', { method: 'POST', body: JSON.stringify(data) }),
+  },
+
   students: {
     list: () => apiFetch<any[]>('/students'),
     getById: (id: string) => apiFetch<any>(`/students/${id}`),

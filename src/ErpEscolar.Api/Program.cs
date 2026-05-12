@@ -56,6 +56,9 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
+
+// Teachers
+builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IAcademicService, AcademicService>();
 
 // Enrollment
