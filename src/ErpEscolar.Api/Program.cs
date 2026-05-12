@@ -11,9 +11,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database
+// Database - SQLite para demo (trocar pra PostgreSQL em producao)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite("Data Source=educore.db"));
 
 // Auth
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ErpEscolar-SuperSecret-Key-2024!@#$%";
@@ -81,11 +81,35 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Auto-migrate database
+// Auto-migrate database + seed
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
+
+    // Seed admin user
+    if (!db.Users.Any())
+    {
+        var admin = new ErpEscolar.Core.Entities.User
+        {
+            Name = "Administrador",
+            Email = "admin@escola.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+            Role = "admin",
+        };
+        db.Users.Add(admin);
+
+        // Seed demo teacher
+        var teacher = new ErpEscolar.Core.Entities.User
+        {
+            Name = "Professor Demo",
+            Email = "professor@escola.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+            Role = "teacher",
+        };
+        db.Users.Add(teacher);
+        db.SaveChanges();
+    }
 }
 
 // Serve static frontend in production
