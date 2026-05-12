@@ -11,9 +11,18 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database - InMemory para demo (trocar pra PostgreSQL em producao)
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseInMemoryDatabase("EduCoreDB"));
+// Database - PostgreSQL (ou InMemory como fallback)
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(connStr))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseNpgsql(connStr));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("EduCoreDB"));
+}
 
 // Auth
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ErpEscolar-SuperSecret-Key-2024!@#$%";
