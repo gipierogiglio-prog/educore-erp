@@ -11,9 +11,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Database - SQLite para demo (trocar pra PostgreSQL em producao)
+// Database - InMemory para demo (trocar pra PostgreSQL em producao)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=educore.db"));
+    options.UseInMemoryDatabase("EduCoreDB"));
 
 // Auth
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ErpEscolar-SuperSecret-Key-2024!@#$%";
