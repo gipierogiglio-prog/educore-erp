@@ -121,24 +121,11 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Serve static frontend in production
-if (!app.Environment.IsDevelopment())
-{
-    app.UseDefaultFiles();
-    app.UseStaticFiles();
-}
-
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-// SPA fallback
-if (!app.Environment.IsDevelopment())
-{
-    app.MapFallbackToFile("index.html");
-}
 
 app.Run();
