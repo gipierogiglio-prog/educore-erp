@@ -5,7 +5,7 @@ nixPkgs = ["dotnet-sdk_8"]
 cmds = ["dotnet restore erp-escolar.sln"]
 
 [phases.build]
-cmds = ["dotnet publish src/ErpEscolar.Api/ErpEscolar.Api.csproj -c Release -o /app/dist"]
+cmds = ["dotnet publish src/ErpEscolar.Api/ErpEscolar.Api.csproj -c Release"]
 
 [start]
-cmd = "dotnet /app/dist/ErpEscolar.Api.dll"
+cmd = "dotnet src/ErpEscolar.Api/bin/Release/net8.0/publish/ErpEscolar.Api.dll"
