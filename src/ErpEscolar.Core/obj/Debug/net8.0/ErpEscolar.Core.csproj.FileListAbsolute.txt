@@ -1,0 +1,12 @@
+/tmp/educore-erp/src/ErpEscolar.Core/bin/Debug/net8.0/ErpEscolar.Core.deps.json
+/tmp/educore-erp/src/ErpEscolar.Core/bin/Debug/net8.0/ErpEscolar.Core.dll
+/tmp/educore-erp/src/ErpEscolar.Core/bin/Debug/net8.0/ErpEscolar.Core.pdb
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.GeneratedMSBuildEditorConfig.editorconfig
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.AssemblyInfoInputs.cache
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.AssemblyInfo.cs
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.csproj.CoreCompileInputs.cache
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.sourcelink.json
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.dll
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/refint/ErpEscolar.Core.dll
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ErpEscolar.Core.pdb
+/tmp/educore-erp/src/ErpEscolar.Core/obj/Debug/net8.0/ref/ErpEscolar.Core.dll
