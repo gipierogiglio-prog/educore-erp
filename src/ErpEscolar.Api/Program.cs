@@ -105,47 +105,55 @@ var app = builder.Build();
 // Auto-migrate database + seed
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
-
-    // Seed default organization
-    var defaultOrg = db.Organizations.FirstOrDefault();
-    if (defaultOrg == null)
+    try
     {
-        defaultOrg = new ErpEscolar.Core.Entities.Organization
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        db.Database.EnsureCreated();
+
+        // Seed default organization
+        var defaultOrg = db.Organizations.FirstOrDefault();
+        if (defaultOrg == null)
         {
-            Name = "Escola Demo",
-            Slug = "escola-demo",
-            Status = "active",
-        };
-        db.Organizations.Add(defaultOrg);
-        db.SaveChanges();
+            defaultOrg = new ErpEscolar.Core.Entities.Organization
+            {
+                Name = "Escola Demo",
+                Slug = "escola-demo",
+                Status = "active",
+            };
+            db.Organizations.Add(defaultOrg);
+            db.SaveChanges();
+        }
+
+        // Seed admin user
+        if (!db.Users.Any())
+        {
+            var admin = new ErpEscolar.Core.Entities.User
+            {
+                Name = "Administrador",
+                Email = "admin@escola.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+                Role = "org_admin",
+                OrganizationId = defaultOrg.Id,
+            };
+            db.Users.Add(admin);
+
+            // Seed demo teacher
+            var teacher = new ErpEscolar.Core.Entities.User
+            {
+                Name = "Professor Demo",
+                Email = "professor@escola.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
+                Role = "teacher",
+                OrganizationId = defaultOrg.Id,
+            };
+            db.Users.Add(teacher);
+            db.SaveChanges();
+        }
     }
-
-    // Seed admin user
-    if (!db.Users.Any())
+    catch (Exception ex)
     {
-        var admin = new ErpEscolar.Core.Entities.User
-        {
-            Name = "Administrador",
-            Email = "admin@escola.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
-            Role = "org_admin",
-            OrganizationId = defaultOrg.Id,
-        };
-        db.Users.Add(admin);
-
-        // Seed demo teacher
-        var teacher = new ErpEscolar.Core.Entities.User
-        {
-            Name = "Professor Demo",
-            Email = "professor@escola.com",
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword("123456"),
-            Role = "teacher",
-            OrganizationId = defaultOrg.Id,
-        };
-        db.Users.Add(teacher);
-        db.SaveChanges();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogWarning(ex, "Database seed skipped (non-critical)");
     }
 }
 
