@@ -634,5 +634,3 @@ public class GradingRuleRepository : IGradingRuleRepository
     public async Task UpdateAsync(GradingRule r) { await _db.SaveChangesAsync(); }
 }
 
-}
-}
