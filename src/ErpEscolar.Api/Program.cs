@@ -65,6 +65,12 @@ builder.Services.AddScoped<IAcademicService, AcademicService>();
 builder.Services.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
 builder.Services.AddScoped<ISchoolYearService, SchoolYearService>();
 
+// Permissions
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IPermissionGroupRepository, PermissionGroupRepository>();
+builder.Services.AddScoped<IUserPermissionRepository, UserPermissionRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+
 // Enrollment
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();

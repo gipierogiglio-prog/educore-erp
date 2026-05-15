@@ -21,6 +21,11 @@ public class AppDbContext : DbContext
     public DbSet<Enrollment> Enrollments => Set<Enrollment>();
     public DbSet<SchoolYear> SchoolYears => Set<SchoolYear>();
     public DbSet<Organization> Organizations => Set<Organization>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<PermissionGroup> PermissionGroups => Set<PermissionGroup>();
+    public DbSet<GroupPermission> GroupPermissions => Set<GroupPermission>();
+    public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
+    public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -139,6 +144,50 @@ public class AppDbContext : DbContext
         {
             e.HasKey(t => t.Id);
             e.Property(t => t.Value).HasColumnType("decimal(10,2)");
+        });
+
+        // Permission
+        modelBuilder.Entity<Permission>(e =>
+        {
+            e.HasKey(p => p.Id);
+            e.HasIndex(p => new { p.Resource, p.Action }).IsUnique();
+            e.Property(p => p.Resource).HasMaxLength(50).IsRequired();
+            e.Property(p => p.Action).HasMaxLength(50).IsRequired();
+        });
+
+        // PermissionGroup
+        modelBuilder.Entity<PermissionGroup>(e =>
+        {
+            e.HasKey(pg => pg.Id);
+            e.Property(pg => pg.Name).HasMaxLength(100).IsRequired();
+            e.HasOne(pg => pg.Organization).WithMany().HasForeignKey(pg => pg.OrganizationId);
+        });
+
+        // GroupPermission
+        modelBuilder.Entity<GroupPermission>(e =>
+        {
+            e.HasKey(gp => gp.Id);
+            e.HasIndex(gp => new { gp.GroupId, gp.PermissionId }).IsUnique();
+            e.HasOne(gp => gp.Group).WithMany(g => g.GroupPermissions).HasForeignKey(gp => gp.GroupId);
+            e.HasOne(gp => gp.Permission).WithMany().HasForeignKey(gp => gp.PermissionId);
+        });
+
+        // UserPermission
+        modelBuilder.Entity<UserPermission>(e =>
+        {
+            e.HasKey(up => up.Id);
+            e.HasIndex(up => new { up.UserId, up.PermissionId }).IsUnique();
+            e.HasOne(up => up.User).WithMany().HasForeignKey(up => up.UserId);
+            e.HasOne(up => up.Permission).WithMany().HasForeignKey(up => up.PermissionId);
+        });
+
+        // UserGroup
+        modelBuilder.Entity<UserGroup>(e =>
+        {
+            e.HasKey(ug => ug.Id);
+            e.HasIndex(ug => new { ug.UserId, ug.GroupId }).IsUnique();
+            e.HasOne(ug => ug.User).WithMany().HasForeignKey(ug => ug.UserId);
+            e.HasOne(ug => ug.Group).WithMany(g => g.UserGroups).HasForeignKey(ug => ug.GroupId);
         });
     }
 }

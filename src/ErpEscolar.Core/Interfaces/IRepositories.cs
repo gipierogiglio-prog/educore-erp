@@ -86,3 +86,28 @@ public interface IInvoiceRepository
     Task CreateBatchAsync(List<Invoice> invoices);
     Task UpdateAsync(Invoice invoice);
 }
+
+// === Permissions ===
+public interface IPermissionRepository
+{
+    Task<List<Permission>> GetAllAsync();
+    Task<Permission?> GetByIdAsync(Guid id);
+    Task<Permission> CreateAsync(Permission permission);
+    Task CreateBatchAsync(List<Permission> permissions);
+}
+
+public interface IPermissionGroupRepository
+{
+    Task<List<PermissionGroup>> GetByOrganizationAsync(Guid orgId);
+    Task<PermissionGroup?> GetByIdAsync(Guid id);
+    Task<PermissionGroup> CreateAsync(PermissionGroup group);
+    Task UpdateAsync(PermissionGroup group);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IUserPermissionRepository
+{
+    Task<List<UserPermission>> GetByUserAsync(Guid userId);
+    Task SetPermissionAsync(Guid userId, Guid permissionId, bool granted);
+    Task RemovePermissionAsync(Guid userId, Guid permissionId);
+}

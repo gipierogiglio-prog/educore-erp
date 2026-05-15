@@ -263,3 +263,103 @@ public class InvoiceRepository : IInvoiceRepository
 
     public async Task UpdateAsync(Invoice invoice) => await _db.SaveChangesAsync();
 }
+
+// === Permission ===
+public class PermissionRepository : IPermissionRepository
+{
+    private readonly AppDbContext _db;
+    public PermissionRepository(AppDbContext db) => _db = db;
+
+    public async Task<List<Permission>> GetAllAsync() =>
+        await _db.Permissions.OrderBy(p => p.Resource).ThenBy(p => p.Action).ToListAsync();
+
+    public async Task<Permission?> GetByIdAsync(Guid id) =>
+        await _db.Permissions.FindAsync(id);
+
+    public async Task<Permission> CreateAsync(Permission permission)
+    {
+        _db.Permissions.Add(permission);
+        await _db.SaveChangesAsync();
+        return permission;
+    }
+
+    public async Task CreateBatchAsync(List<Permission> permissions)
+    {
+        _db.Permissions.AddRange(permissions);
+        await _db.SaveChangesAsync();
+    }
+}
+
+public class PermissionGroupRepository : IPermissionGroupRepository
+{
+    private readonly AppDbContext _db;
+    public PermissionGroupRepository(AppDbContext db) => _db = db;
+
+    public async Task<List<PermissionGroup>> GetByOrganizationAsync(Guid orgId) =>
+        await _db.PermissionGroups.Include(pg => pg.GroupPermissions).ThenInclude(gp => gp.Permission)
+            .Where(pg => pg.OrganizationId == orgId).OrderBy(pg => pg.Name).ToListAsync();
+
+    public async Task<PermissionGroup?> GetByIdAsync(Guid id) =>
+        await _db.PermissionGroups.Include(pg => pg.GroupPermissions).ThenInclude(gp => gp.Permission)
+            .FirstOrDefaultAsync(pg => pg.Id == id);
+
+    public async Task<PermissionGroup> CreateAsync(PermissionGroup group)
+    {
+        _db.PermissionGroups.Add(group);
+        await _db.SaveChangesAsync();
+        return group;
+    }
+
+    public async Task UpdateAsync(PermissionGroup group) => await _db.SaveChangesAsync();
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var group = await _db.PermissionGroups.FindAsync(id);
+        if (group != null)
+        {
+            _db.PermissionGroups.Remove(group);
+            await _db.SaveChangesAsync();
+        }
+    }
+}
+
+public class UserPermissionRepository : IUserPermissionRepository
+{
+    private readonly AppDbContext _db;
+    public UserPermissionRepository(AppDbContext db) => _db = db;
+
+    public async Task<List<UserPermission>> GetByUserAsync(Guid userId) =>
+        await _db.UserPermissions.Include(up => up.Permission)
+            .Where(up => up.UserId == userId).ToListAsync();
+
+    public async Task SetPermissionAsync(Guid userId, Guid permissionId, bool granted)
+    {
+        var existing = await _db.UserPermissions
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.PermissionId == permissionId);
+        if (existing != null)
+        {
+            existing.Granted = granted;
+        }
+        else
+        {
+            _db.UserPermissions.Add(new UserPermission
+            {
+                UserId = userId,
+                PermissionId = permissionId,
+                Granted = granted,
+            });
+        }
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task RemovePermissionAsync(Guid userId, Guid permissionId)
+    {
+        var existing = await _db.UserPermissions
+            .FirstOrDefaultAsync(up => up.UserId == userId && up.PermissionId == permissionId);
+        if (existing != null)
+        {
+            _db.UserPermissions.Remove(existing);
+            await _db.SaveChangesAsync();
+        }
+    }
+}
