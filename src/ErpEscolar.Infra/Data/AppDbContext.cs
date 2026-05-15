@@ -23,12 +23,21 @@ public class AppDbContext : DbContext
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Course> Courses => Set<Course>();
+    public DbSet<Staff> Staff => Set<Staff>();
     public DbSet<PermissionGroup> PermissionGroups => Set<PermissionGroup>();
     public DbSet<GroupPermission> GroupPermissions => Set<GroupPermission>();
     public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        modelBuilder.Entity<Staff>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.Property(s => s.Position).HasMaxLength(100).IsRequired();
+            e.Property(s => s.Department).HasMaxLength(50);
+            e.HasOne(s => s.User).WithMany().HasForeignKey(s => s.UserId);
+        });
 
         modelBuilder.Entity<Course>(e =>
         {

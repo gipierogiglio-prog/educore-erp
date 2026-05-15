@@ -433,3 +433,27 @@ public class CourseRepository : ICourseRepository
         }
     }
 }
+public class StaffRepository : IStaffRepository
+{
+    private readonly AppDbContext _db;
+    public StaffRepository(AppDbContext db) => _db = db;
+
+    public async Task<Staff?> GetByIdAsync(Guid id) =>
+        await _db.Staff.Include(s => s.User).FirstOrDefaultAsync(s => s.Id == id);
+
+    public async Task<List<Staff>> GetAllAsync(Guid orgId, bool activeOnly = true)
+    {
+        var query = _db.Staff.Include(s => s.User).Where(s => s.OrganizationId == orgId).AsQueryable();
+        if (activeOnly) query = query.Where(s => s.Active);
+        return await query.OrderBy(s => s.User.Name).ToListAsync();
+    }
+
+    public async Task<Staff> CreateAsync(Staff staff)
+    {
+        _db.Staff.Add(staff);
+        await _db.SaveChangesAsync();
+        return staff;
+    }
+
+    public async Task UpdateAsync(Staff staff) => await _db.SaveChangesAsync();
+}

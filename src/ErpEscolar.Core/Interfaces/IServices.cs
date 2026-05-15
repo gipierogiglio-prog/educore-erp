@@ -53,6 +53,7 @@ public interface ISchoolYearService
     Task<Services.SchoolYearResponse?> GetByIdAsync(Guid id);
     Task<Services.SchoolYearResponse> CreateAsync(Services.CreateSchoolYearRequest request);
     Task UpdateStatusAsync(Guid id, string status);
+    Task<TransferResponse> TransferAsync(TransferRequest request, Guid orgId);
 }
 
 public interface IEnrollmentService
@@ -75,4 +76,13 @@ public interface ICourseService
     Task<CourseResponse> CreateAsync(CreateCourseRequest request, Guid orgId);
     Task<CourseResponse> UpdateAsync(Guid id, UpdateCourseRequest request);
     Task DeleteAsync(Guid id);
+}
+
+public interface IStaffService
+{
+    Task<List<StaffResponse>> GetAllAsync(Guid orgId);
+    Task<StaffResponse?> GetByIdAsync(Guid id);
+    Task<StaffResponse> CreateAsync(CreateStaffRequest request, Guid orgId);
+    Task<StaffResponse> UpdateAsync(Guid id, UpdateStaffRequest request, Guid orgId);
+    Task ToggleStatusAsync(Guid id);
 }

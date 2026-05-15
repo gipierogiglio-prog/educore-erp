@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ErpEscolar.Core.Interfaces;
 using ErpEscolar.Core.Services;
+using System.Security.Claims;
 
 namespace ErpEscolar.Api.Controllers;
 
@@ -54,6 +55,29 @@ public class EnrollmentsController : ControllerBase
         {
             return NotFound(new { message = ex.Message });
         }
+    }
+
+    [HttpPost("transfer")]
+    public async Task<IActionResult> Transfer([FromBody] TransferRequest request)
+    {
+        try
+        {
+            var orgId = GetOrgId();
+            if (orgId == null) return BadRequest(new { message = "Usuario sem organizacao" });
+            var result = await _service.TransferAsync(request, orgId.Value);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    private Guid? GetOrgId()
+    {
+        var val = User.FindFirstValue("organizationId");
+        if (Guid.TryParse(val, out var id)) return id;
+        return null;
     }
 }
 

@@ -137,3 +137,11 @@ public interface ICourseRepository
     Task<List<Grade>> GetByStudentAndYearAsync(Guid studentId, int year);
     Task DeleteAsync(Guid id);
 }
+
+public interface IStaffRepository
+{
+    Task<Staff?> GetByIdAsync(Guid id);
+    Task<List<Staff>> GetAllAsync(Guid orgId, bool activeOnly = true);
+    Task<Staff> CreateAsync(Staff staff);
+    Task UpdateAsync(Staff staff);
+}

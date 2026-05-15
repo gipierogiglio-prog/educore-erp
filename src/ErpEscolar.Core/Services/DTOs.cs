@@ -81,3 +81,31 @@ public record StudentAttendanceSummary(
     Guid StudentId, string StudentName,
     int TotalClasses, int PresentCount, int AbsentCount, double Percentage
 );
+
+// === Staff ===
+public record CreateStaffRequest(
+    string Name, string Email, string Password,
+    string Position, string? Department, string? Phone, decimal? Salary
+);
+public record UpdateStaffRequest(
+    string? Name, string? Position, string? Department, string? Phone, decimal? Salary
+);
+public record StaffResponse(
+    Guid Id, string Name, string Email, string Position,
+    string? Department, string? Phone, DateTime HireDate, bool Active
+);
+
+// === Transfer ===
+public record TransferRequest(Guid StudentId, Guid FromClassId, Guid ToClassId, string? Reason);
+public record TransferResponse(
+    Guid EnrollmentId, string StudentName, string FromClass, string ToClass,
+    DateTime Date, string? Reason, string Status
+);
+
+// === Reports ===
+public record EnrolledStudentsReport(
+    string StudentName, string Enrollment, string ClassName,
+    string Shift, string? GuardianName, string Status
+);
+public record ClassesByYearReport(string ClassName, string Shift, int StudentCount, int Vacancies);
+public record StudentsByCourseReport(string CourseName, int ClassCount, int StudentCount);

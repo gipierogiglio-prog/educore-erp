@@ -3,6 +3,7 @@ using ErpEscolar.Core.Interfaces;
 using ErpEscolar.Core.Services;
 
 namespace ErpEscolar.Infra.Services;
+using ErpEscolar.Core.Entities;
 
 public class EnrollmentService : IEnrollmentService
 {

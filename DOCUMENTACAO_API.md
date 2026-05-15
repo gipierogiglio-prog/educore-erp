@@ -219,7 +219,38 @@ Lista professores.
 
 ---
 
-### 7. Matrículas (Enrollments)
+### 6.1. Funcionarios Administrativos (Staff)
+
+#### GET /staff
+Lista funcionarios administrativos (secretarios, coordenadores, etc).
+
+#### GET /staff/{id}
+Detalhes do funcionario.
+
+#### POST /staff
+```json
+{
+  "name": "Maria Secretaria",
+  "email": "maria@escola.com",
+  "password": "senha123",
+  "position": "secretary",
+  "department": "administrative",
+  "phone": "(11) 97777-5555",
+  "salary": 3500.00
+}
+```
+Posicoes comuns: "secretary", "coordinator", "principal", "financial", "pedagogical"
+Departamentos: "administrative", "pedagogical", "financial"
+
+#### PUT /staff/{id}
+Atualizar dados.
+
+#### PATCH /staff/{id}/toggle-status
+Ativar/desativar.
+
+---
+
+### 7. Matriculas (Enrollments)
 
 #### GET /api/enrollments
 Lista matrículas. Query params: `?year=2026`
@@ -234,6 +265,17 @@ Matrículas de um aluno específico.
   "classId": "guid",
   "schoolYear": 2026,
   "notes": "Aluno transferido da escola X"
+}
+```
+
+#### POST /api/enrollments/transfer
+Transferencia de aluno entre turmas.
+```json
+{
+  "studentId": "guid",
+  "fromClassId": "guid",
+  "toClassId": "guid",
+  "reason": "Aluno foi remanejado para turma do periodo da tarde"
 }
 ```
 
@@ -284,7 +326,20 @@ Registro em lote de frequência.
 
 ---
 
-### 10. Dashboard
+### 10. Relatorios da Secretaria
+
+#### GET /api/reports/enrolled-students
+Lista de alunos matriculados. Query: `?year=2026&classId=guid`
+
+#### GET /api/reports/classes-by-year
+Turmas por ano. Query: `?year=2026`
+
+#### GET /api/reports/students-by-course
+Alunos agrupados por curso.
+
+---
+
+### 11. Dashboard
 
 #### GET /api/dashboard
 ```json
