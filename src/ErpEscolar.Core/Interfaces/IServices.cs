@@ -56,6 +56,7 @@ public interface IEnrollmentService
     Task<List<Services.EnrollmentResponse>> GetByStudentAsync(Guid studentId);
     Task<Services.EnrollmentResponse> CreateAsync(Services.CreateEnrollmentRequest request);
     Task UpdateStatusAsync(Guid id, string status);
+    Task<Services.TransferResponse> TransferAsync(Services.TransferRequest request, Guid orgId);
 }
 
 public interface IDashboardService
