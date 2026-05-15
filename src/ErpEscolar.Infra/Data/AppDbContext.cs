@@ -24,6 +24,9 @@ public class AppDbContext : DbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Staff> Staff => Set<Staff>();
+
+    public DbSet<Course> Courses => Set<Course>();
+    public DbSet<Staff> Staff => Set<Staff>();
     public DbSet<LessonPlan> LessonPlans => Set<LessonPlan>();
     public DbSet<Assessment> Assessments => Set<Assessment>();
     public DbSet<AssessmentGrade> AssessmentGrades => Set<AssessmentGrade>();
@@ -35,7 +38,6 @@ public class AppDbContext : DbContext
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
 
         modelBuilder.Entity<Staff>(e =>
         {
@@ -43,6 +45,33 @@ public class AppDbContext : DbContext
             e.Property(s => s.Position).HasMaxLength(100).IsRequired();
             e.Property(s => s.Department).HasMaxLength(50);
             e.HasOne(s => s.User).WithMany().HasForeignKey(s => s.UserId);
+        });
+
+        modelBuilder.Entity<Course>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
+            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
+            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+    {
+        // User
+
+        modelBuilder.Entity<Staff>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.Property(s => s.Position).HasMaxLength(100).IsRequired();
+            e.Property(s => s.Department).HasMaxLength(50);
+            e.HasOne(s => s.User).WithMany().HasForeignKey(s => s.UserId);
+        });
+
+        modelBuilder.Entity<Course>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
+            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
+            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
         });
 
         modelBuilder.Entity<LessonPlan>(e =>
@@ -84,16 +113,6 @@ public class AppDbContext : DbContext
             e.Property(g => g.Name).HasMaxLength(100).IsRequired();
         });
 
-        modelBuilder.Entity<Course>(e =>
-        {
-            e.HasKey(c => c.Id);
-            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
-            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
-            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
-        });
-
-    {
-        // User
         modelBuilder.Entity<User>(e =>
         {
             e.HasKey(u => u.Id);
@@ -180,6 +199,62 @@ public class AppDbContext : DbContext
         });
 
         // User -> Organization
+
+        modelBuilder.Entity<Staff>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.Property(s => s.Position).HasMaxLength(100).IsRequired();
+            e.Property(s => s.Department).HasMaxLength(50);
+            e.HasOne(s => s.User).WithMany().HasForeignKey(s => s.UserId);
+        });
+
+        modelBuilder.Entity<Course>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
+            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
+            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<LessonPlan>(e =>
+        {
+            e.HasKey(l => l.Id);
+            e.Property(l => l.Topic).HasMaxLength(255);
+            e.HasOne(l => l.Class).WithMany().HasForeignKey(l => l.ClassId);
+            e.HasOne(l => l.Subject).WithMany().HasForeignKey(l => l.SubjectId);
+            e.HasOne(l => l.Teacher).WithMany().HasForeignKey(l => l.TeacherId);
+        });
+
+        modelBuilder.Entity<Assessment>(e =>
+        {
+            e.HasKey(a => a.Id);
+            e.Property(a => a.Title).HasMaxLength(255).IsRequired();
+            e.Property(a => a.Type).HasMaxLength(20).IsRequired();
+            e.HasOne(a => a.Subject).WithMany().HasForeignKey(a => a.SubjectId);
+            e.HasOne(a => a.Class).WithMany().HasForeignKey(a => a.ClassId);
+        });
+
+        modelBuilder.Entity<AssessmentGrade>(e =>
+        {
+            e.HasKey(ag => ag.Id);
+            e.HasOne(ag => ag.Assessment).WithMany().HasForeignKey(ag => ag.AssessmentId);
+            e.HasOne(ag => ag.Student).WithMany().HasForeignKey(ag => ag.StudentId);
+        });
+
+        modelBuilder.Entity<ScheduleEntry>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.HasOne(s => s.Class).WithMany().HasForeignKey(s => s.ClassId);
+            e.HasOne(s => s.Subject).WithMany().HasForeignKey(s => s.SubjectId);
+            e.HasOne(s => s.Teacher).WithMany().HasForeignKey(s => s.TeacherId);
+        });
+
+        modelBuilder.Entity<GradingRule>(e =>
+        {
+            e.HasKey(g => g.Id);
+            e.Property(g => g.Name).HasMaxLength(100).IsRequired();
+        });
+
         modelBuilder.Entity<User>(e =>
         {
             e.HasOne(u => u.Organization).WithMany().HasForeignKey(u => u.OrganizationId).OnDelete(DeleteBehavior.SetNull);

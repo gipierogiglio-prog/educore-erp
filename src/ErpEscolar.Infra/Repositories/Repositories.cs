@@ -458,6 +458,72 @@ public class StaffRepository : IStaffRepository
     public async Task UpdateAsync(Staff staff) => await _db.SaveChangesAsync();
 }
 
+
+public class CourseRepository : ICourseRepository
+{
+    private readonly AppDbContext _db;
+    public CourseRepository(AppDbContext db) => _db = db;
+
+    public async Task<Course?> GetByIdAsync(Guid id) =>
+        await _db.Courses.Include(c => c.Classes).Include(c => c.Subjects)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+    public async Task<List<Course>> GetAllAsync(Guid orgId, bool activeOnly = true)
+    {
+        var query = _db.Courses.Where(c => c.OrganizationId == orgId).AsQueryable();
+        if (activeOnly) query = query.Where(c => c.Active);
+        return await query.OrderBy(c => c.Name).ToListAsync();
+    }
+
+    public async Task<Course> CreateAsync(Course course)
+    {
+        _db.Courses.Add(course);
+        await _db.SaveChangesAsync();
+        return course;
+    }
+
+    public async Task UpdateAsync(Course course)
+    {
+        course.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var course = await _db.Courses.FindAsync(id);
+        if (course != null)
+        {
+            course.Active = false;
+            await _db.SaveChangesAsync();
+        }
+    }
+}
+
+public class StaffRepository : IStaffRepository
+{
+    private readonly AppDbContext _db;
+    public StaffRepository(AppDbContext db) => _db = db;
+
+    public async Task<Staff?> GetByIdAsync(Guid id) =>
+        await _db.Staff.Include(s => s.User).FirstOrDefaultAsync(s => s.Id == id);
+
+    public async Task<List<Staff>> GetAllAsync(Guid orgId, bool activeOnly = true)
+    {
+        var query = _db.Staff.Include(s => s.User).Where(s => s.OrganizationId == orgId).AsQueryable();
+        if (activeOnly) query = query.Where(s => s.Active);
+        return await query.OrderBy(s => s.User.Name).ToListAsync();
+    }
+
+    public async Task<Staff> CreateAsync(Staff staff)
+    {
+        _db.Staff.Add(staff);
+        await _db.SaveChangesAsync();
+        return staff;
+    }
+
+    public async Task UpdateAsync(Staff staff) => await _db.SaveChangesAsync();
+}
+
 public class LessonPlanRepository : ILessonPlanRepository
 {
     private readonly AppDbContext _db;
@@ -530,7 +596,6 @@ public class AssessmentGradeRepository : IAssessmentGradeRepository
             .ToListAsync();
 
     public async Task<AssessmentGrade> CreateAsync(AssessmentGrade g) { _db.AssessmentGrades.Add(g); await _db.SaveChangesAsync(); return g; }
-
     public async Task CreateBatchAsync(List<AssessmentGrade> grades) { _db.AssessmentGrades.AddRange(grades); await _db.SaveChangesAsync(); }
     public async Task UpdateAsync(AssessmentGrade g) { await _db.SaveChangesAsync(); }
 }
@@ -567,4 +632,6 @@ public class GradingRuleRepository : IGradingRuleRepository
         await _db.GradingRules.FirstOrDefaultAsync(g => g.OrganizationId == orgId && g.Active);
     public async Task<GradingRule> CreateAsync(GradingRule r) { _db.GradingRules.Add(r); await _db.SaveChangesAsync(); return r; }
     public async Task UpdateAsync(GradingRule r) { await _db.SaveChangesAsync(); }
+}
+
 }
