@@ -71,10 +71,10 @@ public interface IDashboardService
 
 public interface ICourseService
 {
-    Task<List<CourseResponse>> GetAllAsync(Guid orgId);
-    Task<CourseResponse?> GetByIdAsync(Guid id);
-    Task<CourseResponse> CreateAsync(CreateCourseRequest request, Guid orgId);
-    Task<CourseResponse> UpdateAsync(Guid id, UpdateCourseRequest request);
+    Task<List<Services.CourseResponse>> GetAllAsync(Guid orgId);
+    Task<Services.CourseResponse?> GetByIdAsync(Guid id);
+    Task<Services.CourseResponse> CreateAsync(Services.CreateCourseRequest request, Guid orgId);
+    Task<Services.CourseResponse> UpdateAsync(Guid id, Services.UpdateCourseRequest request);
     Task DeleteAsync(Guid id);
 }
 
