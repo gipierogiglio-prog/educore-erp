@@ -35,6 +35,7 @@ public class AppDbContext : DbContext
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
 
         modelBuilder.Entity<Staff>(e =>
         {
