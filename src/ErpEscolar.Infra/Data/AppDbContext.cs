@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Course> Courses => Set<Course>();
+
     public DbSet<Staff> Staff => Set<Staff>();
     public DbSet<LessonPlan> LessonPlans => Set<LessonPlan>();
     public DbSet<Assessment> Assessments => Set<Assessment>();
@@ -35,7 +36,17 @@ public class AppDbContext : DbContext
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
+
+        modelBuilder.Entity<Course>(e =>
+        {
+            e.HasKey(c => c.Id);
+            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
+            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
+            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
+        });
+
     {
+        // User
 
         modelBuilder.Entity<Staff>(e =>
         {
@@ -84,15 +95,6 @@ public class AppDbContext : DbContext
             e.Property(g => g.Name).HasMaxLength(100).IsRequired();
         });
 
-        modelBuilder.Entity<Course>(e =>
-        {
-            e.HasKey(c => c.Id);
-            e.Property(c => c.Name).HasMaxLength(200).IsRequired();
-            e.HasMany(c => c.Classes).WithOne(c => c.Course).HasForeignKey(c => c.CourseId).OnDelete(DeleteBehavior.SetNull);
-            e.HasMany(c => c.Subjects).WithOne(s => s.Course).HasForeignKey(s => s.CourseId).OnDelete(DeleteBehavior.SetNull);
-        });
-
-    {
         // User
         modelBuilder.Entity<User>(e =>
         {
