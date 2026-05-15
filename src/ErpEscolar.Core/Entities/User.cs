@@ -11,6 +11,7 @@ public class User
     // org_admin = admin da escola
     // teacher, student, guardian
     public bool Active { get; set; } = true;
+    public bool AutoDeactivated { get; set; } = false; // Desativado automaticamente pela organizacao
     public string? Phone { get; set; }
     public string? AvatarUrl { get; set; }
     public Guid? OrganizationId { get; set; } // null = super_admin

@@ -43,21 +43,32 @@ public class OrganizationController : ControllerBase
 
         org.Status = request.Status;
 
-        // Ao desativar a org, desativa todos os usuários
-        // Ao reativar a org, NÃO reativa usuários (evita ativar quem foi desativado individualmente)
         if (request.Status == "inactive")
         {
+            // Desativar org: marca os ativos como AutoDeactivated e desativa
             var users = await _db.Users.Where(u => u.OrganizationId == orgId && u.Active).ToListAsync();
             foreach (var u in users)
             {
                 u.Active = false;
+                u.AutoDeactivated = true;
             }
             await _db.SaveChangesAsync();
             return Ok(new { message = $"Organização desativada, {users.Count} usuários desativados" });
         }
-
-        await _db.SaveChangesAsync();
-        return Ok(new { message = $"Organização reativada. Usuários inativos precisam ser reativados manualmente." });
+        else
+        {
+            // Reativar org: reativa apenas quem foi desativado automaticamente
+            var usersToReactivate = await _db.Users
+                .Where(u => u.OrganizationId == orgId && u.AutoDeactivated)
+                .ToListAsync();
+            foreach (var u in usersToReactivate)
+            {
+                u.Active = true;
+                u.AutoDeactivated = false;
+            }
+            await _db.SaveChangesAsync();
+            return Ok(new { message = $"Organização reativada, {usersToReactivate.Count} usuários reativados" });
+        }
     }
 
     public record SyncStatusRequest(string OrganizationId, string Status);
