@@ -560,3 +560,4 @@ public class GradingRuleRepository : IGradingRuleRepository
     public async Task<GradingRule> CreateAsync(GradingRule r) { _db.GradingRules.Add(r); await _db.SaveChangesAsync(); return r; }
     public async Task UpdateAsync(GradingRule r) { await _db.SaveChangesAsync(); }
 }
+}
