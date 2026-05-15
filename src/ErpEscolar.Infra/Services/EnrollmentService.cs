@@ -64,4 +64,43 @@ public class EnrollmentService : IEnrollmentService
         e.Id, e.StudentId, e.Student?.User?.Name ?? "", e.Student?.Enrollment ?? "",
         e.ClassId, e.Class?.Name ?? "", e.SchoolYear, e.Status, e.EnrollmentDate
     );
+
+    public async Task<TransferResponse> TransferAsync(TransferRequest request, Guid orgId)
+    {
+        var student = await _studentRepo.GetByIdAsync(request.StudentId);
+        if (student == null) throw new KeyNotFoundException("Aluno nao encontrado");
+
+        var fromClass = await _classRepo.GetByIdAsync(request.FromClassId);
+        var toClass = await _classRepo.GetByIdAsync(request.ToClassId);
+        if (fromClass == null || toClass == null)
+            throw new KeyNotFoundException("Turma nao encontrada");
+
+        var oldEnrollments = await _repo.GetByStudentAsync(request.StudentId);
+        var activeEnrollment = oldEnrollments.FirstOrDefault(e => e.Status == "active");
+        if (activeEnrollment != null)
+        {
+            activeEnrollment.Status = "transferred";
+            activeEnrollment.EndDate = DateTime.UtcNow;
+            await _repo.UpdateAsync(activeEnrollment);
+        }
+
+        student.ClassId = request.ToClassId;
+        await _studentRepo.UpdateAsync(student);
+
+        var newEnrollment = new Enrollment
+        {
+            StudentId = request.StudentId,
+            ClassId = request.ToClassId,
+            SchoolYear = DateTime.UtcNow.Year,
+            OrganizationId = orgId,
+            Status = "active",
+            Notes = $"Transferido de {fromClass.Name}. Motivo: {request.Reason}"
+        };
+        newEnrollment = await _repo.CreateAsync(newEnrollment);
+
+        return new TransferResponse(
+            newEnrollment.Id, student.User.Name, fromClass.Name, toClass.Name,
+            DateTime.UtcNow, request.Reason, "active"
+        );
+    }
 }
