@@ -12,6 +12,7 @@ public class Enrollment
     public string Status { get; set; } = "active"; // active, transferred, completed, cancelled
     public DateTime? EndDate { get; set; }
     public string? ClassName { get; set; }
+    public string ClassShift { get; set; } = string.Empty;
     public string? Notes { get; set; }
 
     // Navigation

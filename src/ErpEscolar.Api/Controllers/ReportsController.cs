@@ -79,7 +79,7 @@ public class ReportsController : ControllerBase
         var orgId = GetOrgId();
         if (orgId == null) return BadRequest(new { message = "Usuario sem organizacao" });
 
-        var courses = await _courseRepo.GetAllAsync(orgId);
+        var courses = await _courseRepo.GetAllAsync(orgId.Value);
         var result = courses.Select(c => new StudentsByCourseReport(
             c.Name, c.Classes.Count, c.Classes.Sum(cl => cl.Students.Count(s => s.Active))
         )).ToList();
