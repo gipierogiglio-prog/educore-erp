@@ -181,6 +181,15 @@ public class GradeRepository : IGradeRepository
     }
 
     public async Task UpdateAsync(Grade grade) => await _db.SaveChangesAsync();
+
+    public async Task<List<Grade>> GetByStudentAndYearAsync(Guid studentId, int year)
+    {
+        return await _db.Grades
+            .Where(g => g.StudentId == studentId && g.SchoolYear == year)
+            .Include(g => g.Subject)
+            .OrderBy(g => g.Subject.Name).ThenBy(g => g.Bimester)
+            .ToListAsync();
+    }
 }
 
 public class AttendanceRepository : IAttendanceRepository
