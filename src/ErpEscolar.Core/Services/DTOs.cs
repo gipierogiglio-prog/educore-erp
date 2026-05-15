@@ -3,7 +3,7 @@ namespace ErpEscolar.Core.Services;
 public record LoginRequest(string Email, string Password);
 public record LoginResponse(string Token, string Name, string Role, DateTime ExpiresAt);
 
-public record RegisterRequest(string Name, string Email, string Password, string Role);
+public record RegisterRequest(string Name, string Email, string Password, string Role, Guid? OrganizationId = null);
 
 public record CreateStudentRequest(
     string Name, string Email, string Password,

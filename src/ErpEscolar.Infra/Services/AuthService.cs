@@ -44,6 +44,7 @@ public class AuthService : IAuthService
             Email = request.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             Role = request.Role.ToLower(),
+            OrganizationId = request.OrganizationId,
         };
 
         user = await _userRepo.CreateAsync(user);
