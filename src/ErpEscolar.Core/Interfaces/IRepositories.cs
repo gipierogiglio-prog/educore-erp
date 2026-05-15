@@ -22,7 +22,7 @@ public interface IStudentRepository
 public interface ITeacherRepository
 {
     Task<Teacher?> GetByIdAsync(Guid id);
-    Task<List<Teacher>> GetAllAsync(bool activeOnly = true);
+    Task<List<Teacher>> GetAllAsync(bool activeOnly = true, Guid? orgId = null);
     Task<Teacher> CreateAsync(Teacher teacher);
     Task UpdateAsync(Teacher teacher);
 }
@@ -30,7 +30,7 @@ public interface ITeacherRepository
 public interface IClassRepository
 {
     Task<Class?> GetByIdAsync(Guid id);
-    Task<List<Class>> GetAllAsync(int? year = null);
+    Task<List<Class>> GetAllAsync(int? year = null, Guid? orgId = null);
     Task<Class> CreateAsync(Class classEntity);
     Task UpdateAsync(Class classEntity);
 }
@@ -38,7 +38,7 @@ public interface IClassRepository
 public interface ISubjectRepository
 {
     Task<Subject?> GetByIdAsync(Guid id);
-    Task<List<Subject>> GetAllAsync();
+    Task<List<Subject>> GetAllAsync(Guid? orgId = null);
     Task<Subject> CreateAsync(Subject subject);
 }
 

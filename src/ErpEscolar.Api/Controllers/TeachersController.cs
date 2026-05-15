@@ -1,5 +1,6 @@
 using ErpEscolar.Core.Interfaces;
 using ErpEscolar.Core.Services;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,11 +15,19 @@ public class TeachersController : ControllerBase
 
     public TeachersController(ITeacherService service) => _service = service;
 
+    private Guid? GetOrgId()
+    {
+        var val = User.FindFirstValue("organizationId");
+        if (Guid.TryParse(val, out var id)) return id;
+        return null;
+    }
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var teachers = await _service.GetAllAsync();
-        return Ok(teachers);
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        return Ok(await _service.GetAllAsync(orgId.Value));
     }
 
     [HttpGet("{id}")]
@@ -34,7 +43,9 @@ public class TeachersController : ControllerBase
     {
         try
         {
-            var teacher = await _service.CreateAsync(request);
+            var orgId = GetOrgId();
+            if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+            var teacher = await _service.CreateAsync(request, orgId.Value);
             return CreatedAtAction(nameof(GetById), new { id = teacher.Id }, teacher);
         }
         catch (InvalidOperationException ex)

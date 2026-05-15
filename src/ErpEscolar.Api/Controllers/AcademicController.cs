@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ErpEscolar.Api.Controllers;
 
+using System.Security.Claims;
+
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -13,27 +15,48 @@ public class AcademicController : ControllerBase
     private readonly IAcademicService _service;
     public AcademicController(IAcademicService service) => _service = service;
 
+    private Guid? GetOrgId()
+    {
+        var val = User.FindFirstValue("organizationId");
+        if (Guid.TryParse(val, out var id)) return id;
+        return null;
+    }
+
     // === Classes ===
 
     [HttpGet("classes")]
-    public async Task<IActionResult> GetClasses() => Ok(await _service.GetClassesAsync());
+    public async Task<IActionResult> GetClasses()
+    {
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        return Ok(await _service.GetClassesAsync(orgId.Value));
+    }
 
     [HttpPost("classes")]
     public async Task<IActionResult> CreateClass([FromBody] CreateClassRequest request)
     {
-        var result = await _service.CreateClassAsync(request.Name, request.Shift, request.Room);
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        var result = await _service.CreateClassAsync(request.Name, request.Shift, request.Room, orgId.Value);
         return CreatedAtAction(nameof(GetClasses), null, result);
     }
 
     // === Subjects ===
 
     [HttpGet("subjects")]
-    public async Task<IActionResult> GetSubjects() => Ok(await _service.GetSubjectsAsync());
+    public async Task<IActionResult> GetSubjects()
+    {
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        return Ok(await _service.GetSubjectsAsync(orgId.Value));
+    }
 
     [HttpPost("subjects")]
     public async Task<IActionResult> CreateSubject([FromBody] CreateSubjectRequest request)
     {
-        var result = await _service.CreateSubjectAsync(request.Name, request.Code, request.Workload);
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        var result = await _service.CreateSubjectAsync(request.Name, request.Code, request.Workload, orgId.Value);
         return CreatedAtAction(nameof(GetSubjects), null, result);
     }
 
@@ -42,9 +65,11 @@ public class AcademicController : ControllerBase
     [HttpPost("assign-teacher")]
     public async Task<IActionResult> AssignTeacher([FromBody] AssignTeacherRequest request)
     {
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
         try
         {
-            await _service.AssignTeacherAsync(request.TeacherId, request.SubjectId, request.ClassId);
+            await _service.AssignTeacherAsync(request.TeacherId, request.SubjectId, request.ClassId, orgId.Value);
             return Ok(new { message = "Professor atribuído com sucesso" });
         }
         catch (Exception ex)
@@ -65,7 +90,9 @@ public class AcademicController : ControllerBase
     [HttpPost("grades/batch")]
     public async Task<IActionResult> SubmitGrades([FromBody] GradeBatchRequest request)
     {
-        await _service.SubmitGradesAsync(request);
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        await _service.SubmitGradesAsync(request, orgId.Value);
         return Ok(new { message = "Notas lançadas com sucesso" });
     }
 
@@ -74,7 +101,9 @@ public class AcademicController : ControllerBase
     [HttpPost("attendance/batch")]
     public async Task<IActionResult> SubmitAttendance([FromBody] AttendanceBatchRequest request)
     {
-        await _service.SubmitAttendanceAsync(request);
+        var orgId = GetOrgId();
+        if (orgId == null) return BadRequest(new { message = "Usuário sem organização" });
+        await _service.SubmitAttendanceAsync(request, orgId.Value);
         return Ok(new { message = "Frequência registrada com sucesso" });
     }
 }

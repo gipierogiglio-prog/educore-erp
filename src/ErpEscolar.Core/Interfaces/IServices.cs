@@ -17,21 +17,21 @@ public interface IStudentService
 
 public interface ITeacherService
 {
-    Task<List<Services.TeacherResponse>> GetAllAsync();
+    Task<List<Services.TeacherResponse>> GetAllAsync(Guid orgId);
     Task<Services.TeacherResponse?> GetByIdAsync(Guid id);
-    Task<Services.TeacherResponse> CreateAsync(Services.CreateTeacherRequest request);
+    Task<Services.TeacherResponse> CreateAsync(Services.CreateTeacherRequest request, Guid orgId);
 }
 
 public interface IAcademicService
 {
-    Task<List<Services.ClassResponse>> GetClassesAsync();
-    Task<Services.ClassResponse> CreateClassAsync(string name, string shift, string? room);
-    Task<List<Services.SubjectResponse>> GetSubjectsAsync();
-    Task<Services.SubjectResponse> CreateSubjectAsync(string name, string code, int workload);
-    Task AssignTeacherAsync(Guid teacherId, Guid subjectId, Guid classId);
+    Task<List<Services.ClassResponse>> GetClassesAsync(Guid orgId);
+    Task<Services.ClassResponse> CreateClassAsync(string name, string shift, string? room, Guid orgId);
+    Task<List<Services.SubjectResponse>> GetSubjectsAsync(Guid orgId);
+    Task<Services.SubjectResponse> CreateSubjectAsync(string name, string code, int workload, Guid orgId);
+    Task AssignTeacherAsync(Guid teacherId, Guid subjectId, Guid classId, Guid orgId);
     Task<List<Services.GradeResponse>> GetGradesByClassAsync(Guid classId, int bimester, int year);
-    Task SubmitGradesAsync(Services.GradeBatchRequest request);
-    Task SubmitAttendanceAsync(Services.AttendanceBatchRequest request);
+    Task SubmitGradesAsync(Services.GradeBatchRequest request, Guid orgId);
+    Task SubmitAttendanceAsync(Services.AttendanceBatchRequest request, Guid orgId);
 }
 
 public interface IFinancialService

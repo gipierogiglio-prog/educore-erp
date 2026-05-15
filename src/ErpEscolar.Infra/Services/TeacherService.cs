@@ -15,9 +15,9 @@ public class TeacherService : ITeacherService
         _userRepo = userRepo;
     }
 
-    public async Task<List<TeacherResponse>> GetAllAsync()
+    public async Task<List<TeacherResponse>> GetAllAsync(Guid orgId)
     {
-        var teachers = await _teacherRepo.GetAllAsync();
+        var teachers = await _teacherRepo.GetAllAsync(orgId: orgId);
         return teachers.Select(t => new TeacherResponse(
             t.Id, t.User.Name, t.User.Email,
             t.Specialization, t.TeacherSubjects.Count
@@ -32,7 +32,7 @@ public class TeacherService : ITeacherService
             t.Specialization, t.TeacherSubjects.Count);
     }
 
-    public async Task<TeacherResponse> CreateAsync(CreateTeacherRequest request)
+    public async Task<TeacherResponse> CreateAsync(CreateTeacherRequest request, Guid orgId)
     {
         var existingUser = await _userRepo.GetByEmailAsync(request.Email);
         if (existingUser != null)

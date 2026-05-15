@@ -69,10 +69,11 @@ public class TeacherRepository : ITeacherRepository
     public async Task<Teacher?> GetByIdAsync(Guid id) =>
         await _db.Teachers.Include(t => t.User).Include(t => t.TeacherSubjects).FirstOrDefaultAsync(t => t.Id == id);
 
-    public async Task<List<Teacher>> GetAllAsync(bool activeOnly = true)
+    public async Task<List<Teacher>> GetAllAsync(bool activeOnly = true, Guid? orgId = null)
     {
         var query = _db.Teachers.Include(t => t.User).Include(t => t.TeacherSubjects).AsQueryable();
         if (activeOnly) query = query.Where(t => t.Active);
+        if (orgId.HasValue) query = query.Where(t => t.OrganizationId == orgId.Value);
         return await query.OrderBy(t => t.User.Name).ToListAsync();
     }
 
@@ -95,10 +96,11 @@ public class ClassRepository : IClassRepository
         await _db.Classes.Include(c => c.Students).Include(c => c.TeacherSubjects)
             .FirstOrDefaultAsync(c => c.Id == id);
 
-    public async Task<List<Class>> GetAllAsync(int? year = null)
+    public async Task<List<Class>> GetAllAsync(int? year = null, Guid? orgId = null)
     {
         var query = _db.Classes.Include(c => c.Students).AsQueryable();
         if (year.HasValue) query = query.Where(c => c.Year == year.Value);
+        if (orgId.HasValue) query = query.Where(c => c.OrganizationId == orgId.Value);
         return await query.OrderBy(c => c.Name).ToListAsync();
     }
 
@@ -118,7 +120,12 @@ public class SubjectRepository : ISubjectRepository
     public SubjectRepository(AppDbContext db) => _db = db;
 
     public async Task<Subject?> GetByIdAsync(Guid id) => await _db.Subjects.FindAsync(id);
-    public async Task<List<Subject>> GetAllAsync() => await _db.Subjects.OrderBy(s => s.Name).ToListAsync();
+    public async Task<List<Subject>> GetAllAsync(Guid? orgId = null)
+    {
+        var query = _db.Subjects.AsQueryable();
+        if (orgId.HasValue) query = query.Where(s => s.OrganizationId == orgId.Value);
+        return await query.OrderBy(s => s.Name).ToListAsync();
+    }
 
     public async Task<Subject> CreateAsync(Subject subject)
     {

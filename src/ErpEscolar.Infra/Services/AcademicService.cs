@@ -26,34 +26,34 @@ public class AcademicService : IAcademicService
         _teacherRepo = teacherRepo;
     }
 
-    public async Task<List<ClassResponse>> GetClassesAsync()
+    public async Task<List<ClassResponse>> GetClassesAsync(Guid orgId)
     {
-        var classes = await _classRepo.GetAllAsync();
+        var classes = await _classRepo.GetAllAsync(orgId: orgId);
         return classes.Select(c => new ClassResponse(c.Id, c.Name, c.Shift, c.Year,
             c.Students.Count(s => s.Active))).ToList();
     }
 
-    public async Task<ClassResponse> CreateClassAsync(string name, string shift, string? room)
+    public async Task<ClassResponse> CreateClassAsync(string name, string shift, string? room, Guid orgId)
     {
-        var c = new Class { Name = name, Shift = shift, Room = room };
+        var c = new Class { Name = name, Shift = shift, Room = room, OrganizationId = orgId };
         c = await _classRepo.CreateAsync(c);
         return new ClassResponse(c.Id, c.Name, c.Shift, c.Year, 0);
     }
 
-    public async Task<List<SubjectResponse>> GetSubjectsAsync()
+    public async Task<List<SubjectResponse>> GetSubjectsAsync(Guid orgId)
     {
-        var subjects = await _subjectRepo.GetAllAsync();
+        var subjects = await _subjectRepo.GetAllAsync(orgId: orgId);
         return subjects.Select(s => new SubjectResponse(s.Id, s.Name, s.Code, s.Workload)).ToList();
     }
 
-    public async Task<SubjectResponse> CreateSubjectAsync(string name, string code, int workload)
+    public async Task<SubjectResponse> CreateSubjectAsync(string name, string code, int workload, Guid orgId)
     {
-        var s = new Subject { Name = name, Code = code, Workload = workload };
+        var s = new Subject { Name = name, Code = code, Workload = workload, OrganizationId = orgId };
         s = await _subjectRepo.CreateAsync(s);
         return new SubjectResponse(s.Id, s.Name, s.Code, s.Workload);
     }
 
-    public async Task AssignTeacherAsync(Guid teacherId, Guid subjectId, Guid classId)
+    public async Task AssignTeacherAsync(Guid teacherId, Guid subjectId, Guid classId, Guid orgId)
     {
         var teacher = await _teacherRepo.GetByIdAsync(teacherId);
         if (teacher == null) throw new KeyNotFoundException("Professor não encontrado");
@@ -77,7 +77,7 @@ public class AcademicService : IAcademicService
             g.StudentId, g.Student.User.Name, g.Bimester, g.Value, g.RecoveryValue)).ToList();
     }
 
-    public async Task SubmitGradesAsync(GradeBatchRequest request)
+    public async Task SubmitGradesAsync(GradeBatchRequest request, Guid orgId)
     {
         var students = await _studentRepo.GetByClassIdAsync(request.ClassId);
         var grades = new List<Grade>();
@@ -101,7 +101,7 @@ public class AcademicService : IAcademicService
             await _gradeRepo.CreateBatchAsync(grades);
     }
 
-    public async Task SubmitAttendanceAsync(AttendanceBatchRequest request)
+    public async Task SubmitAttendanceAsync(AttendanceBatchRequest request, Guid orgId)
     {
         var attendances = request.Attendances.Select(a => new Attendance
         {
