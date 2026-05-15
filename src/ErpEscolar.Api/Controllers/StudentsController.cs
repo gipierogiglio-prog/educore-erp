@@ -64,7 +64,7 @@ public class StudentsController : ControllerBase
     }
 
     [HttpPatch("{id}/class")]
-    public async Task<IActionResult> UpdateClass(Guid id, [FromBody] UpdateClassRequest request)
+    public async Task<IActionResult> UpdateClass(Guid id, [FromBody] UpdateStudentClassRequest request)
     {
         try
         {

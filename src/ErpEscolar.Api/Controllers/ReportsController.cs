@@ -47,7 +47,7 @@ public class ReportsController : ControllerBase
                     where s.OrganizationId == orgId.Value
                     select new { e, s };
 
-        if (classId.HasValue)
+        if (classId.HasValue && classId != Guid.Empty)
             query = query.Where(x => x.e.ClassId == classId.Value);
 
         var result = query.Select(x => new EnrolledStudentsReport(
