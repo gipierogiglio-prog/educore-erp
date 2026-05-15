@@ -14,6 +14,7 @@ public class Subject
     public bool Active { get; set; } = true;
 
     // Navigation
+    public User? User { get; set; }
     public ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();
     public ICollection<Grade> Grades { get; set; } = new List<Grade>();
     public ICollection<Class> Classes { get; set; } = new List<Class>();

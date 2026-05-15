@@ -40,12 +40,15 @@ public interface ISubjectRepository
     Task<Subject?> GetByIdAsync(Guid id);
     Task<List<Subject>> GetAllAsync(Guid? orgId = null);
     Task<Subject> CreateAsync(Subject subject);
+    Task UpdateAsync(Subject subject);
+    Task DeleteAsync(Guid id);
 }
 
 public interface IGradeRepository
 {
     Task<Grade?> GetByIdAsync(Guid id);
     Task<List<Grade>> GetByStudentAsync(Guid studentId);
+    Task<List<Grade>> GetByStudentAndYearAsync(Guid studentId, int year);
     Task<List<Grade>> GetByClassAndBimesterAsync(Guid classId, int bimester, int year);
     Task<Grade> CreateAsync(Grade grade);
     Task CreateBatchAsync(List<Grade> grades);
@@ -57,6 +60,7 @@ public interface IAttendanceRepository
     Task<Attendance?> GetByIdAsync(Guid id);
     Task<List<Attendance>> GetByClassAndDateAsync(Guid classId, DateTime date);
     Task CreateBatchAsync(List<Attendance> attendances);
+    Task<List<Attendance>> GetByStudentAndSubjectAsync(Guid studentId, Guid subjectId, int year);
 }
 
 public interface ISchoolYearRepository
