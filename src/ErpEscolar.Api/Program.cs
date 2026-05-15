@@ -166,14 +166,17 @@ using (var scope = app.Services.CreateScope())
 // Seed default permissions (separado)
 try
 {
-    var permService = scope.ServiceProvider.GetRequiredService<IPermissionService>();
-    await permService.SeedDefaultPermissionsAsync();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation("Permissoes padrao seedadas com sucesso");
+    using (var permScope = app.Services.CreateScope())
+    {
+        var permService = permScope.ServiceProvider.GetRequiredService<IPermissionService>();
+        await permService.SeedDefaultPermissionsAsync();
+        var logger = permScope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Permissoes padrao seedadas com sucesso");
+    }
 }
 catch (Exception ex)
 {
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogWarning(ex, "Seed de permissoes skipped");
 }
 
