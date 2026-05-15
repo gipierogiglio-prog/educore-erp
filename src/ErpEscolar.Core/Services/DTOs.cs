@@ -109,3 +109,59 @@ public record EnrolledStudentsReport(
 );
 public record ClassesByYearReport(string ClassName, string Shift, int StudentCount, int Vacancies);
 public record StudentsByCourseReport(string CourseName, int ClassCount, int StudentCount);
+
+// === Lesson Plan ===
+public record CreateLessonPlanRequest(
+    Guid ClassId, Guid SubjectId, DateTime Date,
+    string? Topic, string? Objectives, string? Content,
+    string? Methodology, string? Resources, string? Homework, string? Notes
+);
+public record UpdateLessonPlanRequest(
+    string? Topic, string? Objectives, string? Content,
+    string? Methodology, string? Resources, string? Homework, string? Notes
+);
+public record LessonPlanResponse(
+    Guid Id, Guid ClassId, string ClassName, Guid SubjectId, string SubjectName,
+    Guid TeacherId, string TeacherName, DateTime Date,
+    string? Topic, string? Objectives, string? Content,
+    string? Methodology, string? Resources, string? Homework, string? Notes,
+    DateTime CreatedAt
+);
+
+// === Assessment ===
+public record CreateAssessmentRequest(
+    string Title, string Type, Guid SubjectId, Guid ClassId,
+    int Bimester, int Year, DateTime Date, decimal MaxScore, decimal Weight, string? Description
+);
+public record AssessmentResponse(
+    Guid Id, string Title, string Type, Guid SubjectId, string SubjectName,
+    Guid ClassId, string ClassName, int Bimester, int Year,
+    DateTime Date, decimal MaxScore, decimal Weight, string? Description
+);
+public record SubmitGradeItem(Guid StudentId, decimal Score, string? Notes);
+public record AssessmentGradeResponse(
+    Guid Id, Guid StudentId, string StudentName, decimal Score, string? Notes
+);
+
+// === Schedule ===
+public record CreateScheduleRequest(
+    Guid ClassId, Guid SubjectId, Guid TeacherId,
+    int DayOfWeek, string StartTime, string EndTime, string? Room
+);
+public record ScheduleResponse(
+    Guid Id, Guid ClassId, string ClassName, Guid SubjectId, string SubjectName,
+    Guid TeacherId, string TeacherName, int DayOfWeek,
+    string StartTime, string EndTime, string? Room
+);
+
+// === Grading Rule ===
+public record UpsertGradingRuleRequest(
+    decimal? PassingGrade, decimal? RecoveryGrade,
+    decimal? B1Weight, decimal? B2Weight, decimal? B3Weight, decimal? B4Weight,
+    bool? UseRecoveryExam, decimal? RecoveryMaxScore, string? Name
+);
+public record GradingRuleResponse(
+    Guid Id, string Name, decimal PassingGrade, decimal RecoveryGrade,
+    decimal B1Weight, decimal B2Weight, decimal B3Weight, decimal B4Weight,
+    bool UseRecoveryExam, decimal RecoveryMaxScore
+);

@@ -145,3 +145,51 @@ public interface IStaffRepository
     Task<Staff> CreateAsync(Staff staff);
     Task UpdateAsync(Staff staff);
 }
+
+public interface ILessonPlanRepository
+{
+    Task<LessonPlan?> GetByIdAsync(Guid id);
+    Task<List<LessonPlan>> GetByClassAndSubjectAsync(Guid classId, Guid subjectId, DateTime? from, DateTime? to);
+    Task<List<LessonPlan>> GetByTeacherAsync(Guid teacherId, DateTime? from, DateTime? to);
+    Task<LessonPlan> CreateAsync(LessonPlan plan);
+    Task UpdateAsync(LessonPlan plan);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IAssessmentRepository
+{
+    Task<Assessment?> GetByIdAsync(Guid id);
+    Task<List<Assessment>> GetByClassAndBimesterAsync(Guid classId, int bimester, int year);
+    Task<List<Assessment>> GetBySubjectAndClassAsync(Guid subjectId, Guid classId, int year);
+    Task<Assessment> CreateAsync(Assessment assessment);
+    Task UpdateAsync(Assessment assessment);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IAssessmentGradeRepository
+{
+    Task<AssessmentGrade?> GetByIdAsync(Guid id);
+    Task<List<AssessmentGrade>> GetByAssessmentAsync(Guid assessmentId);
+    Task<List<AssessmentGrade>> GetByStudentAndBimesterAsync(Guid studentId, int bimester, int year);
+    Task<AssessmentGrade> CreateAsync(AssessmentGrade grade);
+    Task CreateBatchAsync(List<AssessmentGrade> grades);
+    Task UpdateAsync(AssessmentGrade grade);
+}
+
+public interface IScheduleEntryRepository
+{
+    Task<ScheduleEntry?> GetByIdAsync(Guid id);
+    Task<List<ScheduleEntry>> GetByClassAsync(Guid classId);
+    Task<List<ScheduleEntry>> GetByTeacherAsync(Guid teacherId);
+    Task<ScheduleEntry> CreateAsync(ScheduleEntry entry);
+    Task UpdateAsync(ScheduleEntry entry);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IGradingRuleRepository
+{
+    Task<GradingRule?> GetByIdAsync(Guid id);
+    Task<GradingRule?> GetByOrganizationAsync(Guid orgId);
+    Task<GradingRule> CreateAsync(GradingRule rule);
+    Task UpdateAsync(GradingRule rule);
+}

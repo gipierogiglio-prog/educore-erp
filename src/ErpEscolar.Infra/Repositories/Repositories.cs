@@ -457,3 +457,114 @@ public class StaffRepository : IStaffRepository
 
     public async Task UpdateAsync(Staff staff) => await _db.SaveChangesAsync();
 }
+
+public class LessonPlanRepository : ILessonPlanRepository
+{
+    private readonly AppDbContext _db;
+    public LessonPlanRepository(AppDbContext db) => _db = db;
+
+    public async Task<LessonPlan?> GetByIdAsync(Guid id) =>
+        await _db.LessonPlans.Include(l => l.Class).Include(l => l.Subject).Include(l => l.Teacher).ThenInclude(t => t.User)
+            .FirstOrDefaultAsync(l => l.Id == id);
+
+    public async Task<List<LessonPlan>> GetByClassAndSubjectAsync(Guid classId, Guid subjectId, DateTime? from, DateTime? to)
+    {
+        var query = _db.LessonPlans.Include(l => l.Class).Include(l => l.Subject).Include(l => l.Teacher).ThenInclude(t => t.User)
+            .Where(l => l.ClassId == classId && l.SubjectId == subjectId).AsQueryable();
+        if (from.HasValue) query = query.Where(l => l.Date >= from.Value);
+        if (to.HasValue) query = query.Where(l => l.Date <= to.Value);
+        return await query.OrderBy(l => l.Date).ToListAsync();
+    }
+
+    public async Task<List<LessonPlan>> GetByTeacherAsync(Guid teacherId, DateTime? from, DateTime? to)
+    {
+        var query = _db.LessonPlans.Include(l => l.Class).Include(l => l.Subject).Include(l => l.Teacher).ThenInclude(t => t.User)
+            .Where(l => l.TeacherId == teacherId).AsQueryable();
+        if (from.HasValue) query = query.Where(l => l.Date >= from.Value);
+        if (to.HasValue) query = query.Where(l => l.Date <= to.Value);
+        return await query.OrderBy(l => l.Date).ToListAsync();
+    }
+
+    public async Task<LessonPlan> CreateAsync(LessonPlan plan) { _db.LessonPlans.Add(plan); await _db.SaveChangesAsync(); return plan; }
+    public async Task UpdateAsync(LessonPlan plan) { plan.UpdatedAt = DateTime.UtcNow; await _db.SaveChangesAsync(); }
+    public async Task DeleteAsync(Guid id) { var p = await _db.LessonPlans.FindAsync(id); if (p != null) { _db.LessonPlans.Remove(p); await _db.SaveChangesAsync(); } }
+}
+
+public class AssessmentRepository : IAssessmentRepository
+{
+    private readonly AppDbContext _db;
+    public AssessmentRepository(AppDbContext db) => _db = db;
+
+    public async Task<Assessment?> GetByIdAsync(Guid id) =>
+        await _db.Assessments.Include(a => a.Subject).Include(a => a.Class).FirstOrDefaultAsync(a => a.Id == id);
+
+    public async Task<List<Assessment>> GetByClassAndBimesterAsync(Guid classId, int bimester, int year) =>
+        await _db.Assessments.Include(a => a.Subject).Include(a => a.Class)
+            .Where(a => a.ClassId == classId && a.Bimester == bimester && a.SchoolYear == year)
+            .OrderBy(a => a.Date).ToListAsync();
+
+    public async Task<List<Assessment>> GetBySubjectAndClassAsync(Guid subjectId, Guid classId, int year) =>
+        await _db.Assessments.Include(a => a.Subject)
+            .Where(a => a.SubjectId == subjectId && a.ClassId == classId && a.SchoolYear == year)
+            .OrderBy(a => a.Bimester).ThenBy(a => a.Date).ToListAsync();
+
+    public async Task<Assessment> CreateAsync(Assessment a) { _db.Assessments.Add(a); await _db.SaveChangesAsync(); return a; }
+    public async Task UpdateAsync(Assessment a) { await _db.SaveChangesAsync(); }
+    public async Task DeleteAsync(Guid id) { var a = await _db.Assessments.FindAsync(id); if (a != null) { _db.Assessments.Remove(a); await _db.SaveChangesAsync(); } }
+}
+
+public class AssessmentGradeRepository : IAssessmentGradeRepository
+{
+    private readonly AppDbContext _db;
+    public AssessmentGradeRepository(AppDbContext db) => _db = db;
+
+    public async Task<AssessmentGrade?> GetByIdAsync(Guid id) => await _db.AssessmentGrades.FindAsync(id);
+
+    public async Task<List<AssessmentGrade>> GetByAssessmentAsync(Guid assessmentId) =>
+        await _db.AssessmentGrades.Include(ag => ag.Student).ThenInclude(s => s.User)
+            .Where(ag => ag.AssessmentId == assessmentId).OrderBy(ag => ag.Student.User.Name).ToListAsync();
+
+    public async Task<List<AssessmentGrade>> GetByStudentAndBimesterAsync(Guid studentId, int bimester, int year) =>
+        await _db.AssessmentGrades.Include(ag => ag.Assessment)
+            .Where(ag => ag.StudentId == studentId && ag.Assessment.Bimester == bimester && ag.Assessment.SchoolYear == year)
+            .ToListAsync();
+
+    public async Task<AssessmentGrade> CreateAsync(AssessmentGrade g) { _db.AssessmentGrades.Add(g); await _db.SaveChangesAsync(); return g; }
+
+    public async Task CreateBatchAsync(List<AssessmentGrade> grades) { _db.AssessmentGrades.AddRange(grades); await _db.SaveChangesAsync(); }
+    public async Task UpdateAsync(AssessmentGrade g) { await _db.SaveChangesAsync(); }
+}
+
+public class ScheduleEntryRepository : IScheduleEntryRepository
+{
+    private readonly AppDbContext _db;
+    public ScheduleEntryRepository(AppDbContext db) => _db = db;
+
+    public async Task<ScheduleEntry?> GetByIdAsync(Guid id) =>
+        await _db.ScheduleEntries.Include(s => s.Class).Include(s => s.Subject).Include(s => s.Teacher).ThenInclude(t => t.User)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+    public async Task<List<ScheduleEntry>> GetByClassAsync(Guid classId) =>
+        await _db.ScheduleEntries.Include(s => s.Subject).Include(s => s.Teacher).ThenInclude(t => t.User)
+            .Where(s => s.ClassId == classId).OrderBy(s => s.DayOfWeek).ThenBy(s => s.StartTime).ToListAsync();
+
+    public async Task<List<ScheduleEntry>> GetByTeacherAsync(Guid teacherId) =>
+        await _db.ScheduleEntries.Include(s => s.Class).Include(s => s.Subject).ThenInclude(t => t.User)
+            .Where(s => s.TeacherId == teacherId).OrderBy(s => s.DayOfWeek).ThenBy(s => s.StartTime).ToListAsync();
+
+    public async Task<ScheduleEntry> CreateAsync(ScheduleEntry e) { _db.ScheduleEntries.Add(e); await _db.SaveChangesAsync(); return e; }
+    public async Task UpdateAsync(ScheduleEntry e) { await _db.SaveChangesAsync(); }
+    public async Task DeleteAsync(Guid id) { var e = await _db.ScheduleEntries.FindAsync(id); if (e != null) { _db.ScheduleEntries.Remove(e); await _db.SaveChangesAsync(); } }
+}
+
+public class GradingRuleRepository : IGradingRuleRepository
+{
+    private readonly AppDbContext _db;
+    public GradingRuleRepository(AppDbContext db) => _db = db;
+
+    public async Task<GradingRule?> GetByIdAsync(Guid id) => await _db.GradingRules.FindAsync(id);
+    public async Task<GradingRule?> GetByOrganizationAsync(Guid orgId) =>
+        await _db.GradingRules.FirstOrDefaultAsync(g => g.OrganizationId == orgId && g.Active);
+    public async Task<GradingRule> CreateAsync(GradingRule r) { _db.GradingRules.Add(r); await _db.SaveChangesAsync(); return r; }
+    public async Task UpdateAsync(GradingRule r) { await _db.SaveChangesAsync(); }
+}

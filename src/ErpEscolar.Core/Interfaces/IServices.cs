@@ -86,3 +86,33 @@ public interface IStaffService
     Task<StaffResponse> UpdateAsync(Guid id, UpdateStaffRequest request, Guid orgId);
     Task ToggleStatusAsync(Guid id);
 }
+
+public interface ILessonPlanService
+{
+    Task<List<LessonPlanResponse>> GetByClassAsync(Guid classId, Guid? subjectId, int? month, int? year);
+    Task<LessonPlanResponse> CreateAsync(CreateLessonPlanRequest request, Guid orgId, Guid teacherId);
+    Task<LessonPlanResponse> UpdateAsync(Guid id, UpdateLessonPlanRequest request);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IAssessmentService
+{
+    Task<List<AssessmentResponse>> GetByClassAsync(Guid classId, int? bimester, int? year);
+    Task<AssessmentResponse> CreateAsync(CreateAssessmentRequest request, Guid orgId);
+    Task SubmitGradesAsync(Guid assessmentId, List<SubmitGradeItem> grades);
+    Task<List<AssessmentGradeResponse>> GetGradesAsync(Guid assessmentId);
+}
+
+public interface IScheduleService
+{
+    Task<List<ScheduleResponse>> GetByClassAsync(Guid classId);
+    Task<List<ScheduleResponse>> GetByTeacherAsync(Guid teacherId);
+    Task<ScheduleResponse> CreateAsync(CreateScheduleRequest request, Guid orgId);
+    Task DeleteAsync(Guid id);
+}
+
+public interface IGradingRuleService
+{
+    Task<GradingRuleResponse?> GetAsync(Guid orgId);
+    Task<GradingRuleResponse> SaveAsync(UpsertGradingRuleRequest request, Guid orgId);
+}

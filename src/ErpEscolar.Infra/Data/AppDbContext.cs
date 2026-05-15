@@ -24,6 +24,11 @@ public class AppDbContext : DbContext
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Staff> Staff => Set<Staff>();
+    public DbSet<LessonPlan> LessonPlans => Set<LessonPlan>();
+    public DbSet<Assessment> Assessments => Set<Assessment>();
+    public DbSet<AssessmentGrade> AssessmentGrades => Set<AssessmentGrade>();
+    public DbSet<ScheduleEntry> ScheduleEntries => Set<ScheduleEntry>();
+    public DbSet<GradingRule> GradingRules => Set<GradingRule>();
     public DbSet<PermissionGroup> PermissionGroups => Set<PermissionGroup>();
     public DbSet<GroupPermission> GroupPermissions => Set<GroupPermission>();
     public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
@@ -37,6 +42,45 @@ public class AppDbContext : DbContext
             e.Property(s => s.Position).HasMaxLength(100).IsRequired();
             e.Property(s => s.Department).HasMaxLength(50);
             e.HasOne(s => s.User).WithMany().HasForeignKey(s => s.UserId);
+        });
+
+        modelBuilder.Entity<LessonPlan>(e =>
+        {
+            e.HasKey(l => l.Id);
+            e.Property(l => l.Topic).HasMaxLength(255);
+            e.HasOne(l => l.Class).WithMany().HasForeignKey(l => l.ClassId);
+            e.HasOne(l => l.Subject).WithMany().HasForeignKey(l => l.SubjectId);
+            e.HasOne(l => l.Teacher).WithMany().HasForeignKey(l => l.TeacherId);
+        });
+
+        modelBuilder.Entity<Assessment>(e =>
+        {
+            e.HasKey(a => a.Id);
+            e.Property(a => a.Title).HasMaxLength(255).IsRequired();
+            e.Property(a => a.Type).HasMaxLength(20).IsRequired();
+            e.HasOne(a => a.Subject).WithMany().HasForeignKey(a => a.SubjectId);
+            e.HasOne(a => a.Class).WithMany().HasForeignKey(a => a.ClassId);
+        });
+
+        modelBuilder.Entity<AssessmentGrade>(e =>
+        {
+            e.HasKey(ag => ag.Id);
+            e.HasOne(ag => ag.Assessment).WithMany().HasForeignKey(ag => ag.AssessmentId);
+            e.HasOne(ag => ag.Student).WithMany().HasForeignKey(ag => ag.StudentId);
+        });
+
+        modelBuilder.Entity<ScheduleEntry>(e =>
+        {
+            e.HasKey(s => s.Id);
+            e.HasOne(s => s.Class).WithMany().HasForeignKey(s => s.ClassId);
+            e.HasOne(s => s.Subject).WithMany().HasForeignKey(s => s.SubjectId);
+            e.HasOne(s => s.Teacher).WithMany().HasForeignKey(s => s.TeacherId);
+        });
+
+        modelBuilder.Entity<GradingRule>(e =>
+        {
+            e.HasKey(g => g.Id);
+            e.Property(g => g.Name).HasMaxLength(100).IsRequired();
         });
 
         modelBuilder.Entity<Course>(e =>
