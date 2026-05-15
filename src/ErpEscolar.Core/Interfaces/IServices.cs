@@ -47,7 +47,6 @@ public interface ISchoolYearService
     Task<Services.SchoolYearResponse?> GetByIdAsync(Guid id);
     Task<Services.SchoolYearResponse> CreateAsync(Services.CreateSchoolYearRequest request);
     Task UpdateStatusAsync(Guid id, string status);
-    Task<Services.TransferResponse> TransferAsync(Services.TransferRequest request, Guid orgId);
 }
 
 public interface IEnrollmentService
