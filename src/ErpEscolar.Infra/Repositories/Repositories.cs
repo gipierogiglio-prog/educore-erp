@@ -370,3 +370,43 @@ public class UserPermissionRepository : IUserPermissionRepository
         }
     }
 }
+
+public class CourseRepository : ICourseRepository
+{
+    private readonly AppDbContext _db;
+    public CourseRepository(AppDbContext db) => _db = db;
+
+    public async Task<Course?> GetByIdAsync(Guid id) =>
+        await _db.Courses.Include(c => c.Classes).Include(c => c.Subjects)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+    public async Task<List<Course>> GetAllAsync(Guid orgId, bool activeOnly = true)
+    {
+        var query = _db.Courses.Where(c => c.OrganizationId == orgId).AsQueryable();
+        if (activeOnly) query = query.Where(c => c.Active);
+        return await query.OrderBy(c => c.Name).ToListAsync();
+    }
+
+    public async Task<Course> CreateAsync(Course course)
+    {
+        _db.Courses.Add(course);
+        await _db.SaveChangesAsync();
+        return course;
+    }
+
+    public async Task UpdateAsync(Course course)
+    {
+        course.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var course = await _db.Courses.FindAsync(id);
+        if (course != null)
+        {
+            course.Active = false;
+            await _db.SaveChangesAsync();
+        }
+    }
+}

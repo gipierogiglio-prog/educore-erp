@@ -8,6 +8,8 @@ public class Subject
     public int Workload { get; set; }
     public Guid OrganizationId { get; set; }
     public Organization Organization { get; set; } = null!;
+    public Guid? CourseId { get; set; }
+    public Course? Course { get; set; }
     public string? Description { get; set; }
     public bool Active { get; set; } = true;
 

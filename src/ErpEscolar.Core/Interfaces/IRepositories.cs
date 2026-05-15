@@ -111,3 +111,12 @@ public interface IUserPermissionRepository
     Task SetPermissionAsync(Guid userId, Guid permissionId, bool granted);
     Task RemovePermissionAsync(Guid userId, Guid permissionId);
 }
+
+public interface ICourseRepository
+{
+    Task<Course?> GetByIdAsync(Guid id);
+    Task<List<Course>> GetAllAsync(Guid orgId, bool activeOnly = true);
+    Task<Course> CreateAsync(Course course);
+    Task UpdateAsync(Course course);
+    Task DeleteAsync(Guid id);
+}

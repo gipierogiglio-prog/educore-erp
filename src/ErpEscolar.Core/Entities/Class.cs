@@ -8,6 +8,8 @@ public class Class
     public int Year { get; set; } = DateTime.UtcNow.Year;
     public Guid OrganizationId { get; set; }
     public Organization Organization { get; set; } = null!;
+    public Guid? CourseId { get; set; }
+    public Course? Course { get; set; }
     public string? Room { get; set; }
     public bool Active { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

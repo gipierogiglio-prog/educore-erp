@@ -61,3 +61,12 @@ public interface IDashboardService
 {
     Task<Services.DashboardData> GetDashboardAsync();
 }
+
+public interface ICourseService
+{
+    Task<List<CourseResponse>> GetAllAsync(Guid orgId);
+    Task<CourseResponse?> GetByIdAsync(Guid id);
+    Task<CourseResponse> CreateAsync(CreateCourseRequest request, Guid orgId);
+    Task<CourseResponse> UpdateAsync(Guid id, UpdateCourseRequest request);
+    Task DeleteAsync(Guid id);
+}

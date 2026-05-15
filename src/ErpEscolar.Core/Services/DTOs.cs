@@ -57,3 +57,10 @@ public record DashboardData(
     int TotalStudents, int TotalTeachers, int TotalClasses,
     int PendingInvoices, decimal MonthlyRevenue, decimal OverdueAmount
 );
+
+public record CreateCourseRequest(string Name, string? Description, int DurationYears);
+public record UpdateCourseRequest(string? Name, string? Description, int? DurationYears);
+public record CourseResponse(
+    Guid Id, string Name, string? Description, int DurationYears,
+    int ClassCount, int SubjectCount, bool Active, DateTime CreatedAt
+);

@@ -51,6 +51,7 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<IGradeRepository, GradeRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 // Services
@@ -60,6 +61,7 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 // Teachers
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IAcademicService, AcademicService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 // SchoolYear
 builder.Services.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
