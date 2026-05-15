@@ -64,3 +64,20 @@ public record CourseResponse(
     Guid Id, string Name, string? Description, int DurationYears,
     int ClassCount, int SubjectCount, bool Active, DateTime CreatedAt
 );
+
+// === Report Card ===
+public record SubjectGrade(
+    string SubjectName, decimal B1, decimal? R1, decimal B2, decimal? R2,
+    decimal B3, decimal? R3, decimal B4, decimal? R4, decimal Average, string Status
+);
+
+public record StudentReportCard(
+    string StudentName, string ClassName, int Year,
+    List<SubjectGrade> Subjects, decimal OverallAverage
+);
+
+// === Attendance Summary ===
+public record StudentAttendanceSummary(
+    Guid StudentId, string StudentName,
+    int TotalClasses, int PresentCount, int AbsentCount, double Percentage
+);

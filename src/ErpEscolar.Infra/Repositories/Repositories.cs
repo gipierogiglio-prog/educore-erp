@@ -133,7 +133,22 @@ public class SubjectRepository : ISubjectRepository
         await _db.SaveChangesAsync();
         return subject;
     }
-}
+
+    public async Task UpdateAsync(Subject subject)
+    {
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(Guid id)
+    {
+        var subject = await _db.Subjects.FindAsync(id);
+        if (subject != null)
+        {
+            subject.Active = false;
+            await _db.SaveChangesAsync();
+        }
+    }
+
 
 public class GradeRepository : IGradeRepository
 {
@@ -184,7 +199,15 @@ public class AttendanceRepository : IAttendanceRepository
         _db.Attendances.AddRange(attendances);
         await _db.SaveChangesAsync();
     }
-}
+
+    public async Task<List<Attendance>> GetByStudentAndSubjectAsync(Guid studentId, Guid subjectId, int year)
+    {
+        return await _db.Attendances
+            .Where(a => a.StudentId == studentId && a.SubjectId == subjectId && a.Date.Year == year)
+            .OrderBy(a => a.Date)
+            .ToListAsync();
+    }
+
 
 public class SchoolYearRepository : ISchoolYearRepository
 {
