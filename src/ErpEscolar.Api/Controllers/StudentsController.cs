@@ -78,3 +78,5 @@ public class StudentsController : ControllerBase
     }
 }
 
+
+public record UpdateStudentClassRequest(Guid? ClassId);
