@@ -150,6 +150,7 @@ public class SubjectRepository : ISubjectRepository
     }
 
 
+}
 public class GradeRepository : IGradeRepository
 {
     private readonly AppDbContext _db;
@@ -208,6 +209,7 @@ public class AttendanceRepository : IAttendanceRepository
             .ToListAsync();
     }
 
+}
 
 public class SchoolYearRepository : ISchoolYearRepository
 {
@@ -559,5 +561,4 @@ public class GradingRuleRepository : IGradingRuleRepository
         await _db.GradingRules.FirstOrDefaultAsync(g => g.OrganizationId == orgId && g.Active);
     public async Task<GradingRule> CreateAsync(GradingRule r) { _db.GradingRules.Add(r); await _db.SaveChangesAsync(); return r; }
     public async Task UpdateAsync(GradingRule r) { await _db.SaveChangesAsync(); }
-}
 }
