@@ -11,6 +11,7 @@ public class Enrollment
     public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
     public string Status { get; set; } = "active"; // active, transferred, completed, cancelled
     public DateTime? EndDate { get; set; }
+    public string? ClassName { get; set; }
     public string? Notes { get; set; }
 
     // Navigation
