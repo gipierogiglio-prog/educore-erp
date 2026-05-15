@@ -26,18 +26,12 @@ public interface IAcademicService
 {
     Task<List<Services.ClassResponse>> GetClassesAsync(Guid orgId);
     Task<Services.ClassResponse> CreateClassAsync(string name, string shift, string? room, Guid orgId);
-    Task<Services.ClassResponse> UpdateClassAsync(Guid id, string name, string shift, string? room, Guid? courseId, Guid orgId);
-    Task DeleteClassAsync(Guid id);
     Task<List<Services.SubjectResponse>> GetSubjectsAsync(Guid orgId);
     Task<Services.SubjectResponse> CreateSubjectAsync(string name, string code, int workload, Guid orgId);
-    Task<Services.SubjectResponse> UpdateSubjectAsync(Guid id, string name, string code, int? workload, Guid? courseId, Guid orgId);
-    Task DeleteSubjectAsync(Guid id);
     Task AssignTeacherAsync(Guid teacherId, Guid subjectId, Guid classId, Guid orgId);
     Task<List<Services.GradeResponse>> GetGradesByClassAsync(Guid classId, int bimester, int year);
     Task SubmitGradesAsync(Services.GradeBatchRequest request, Guid orgId);
     Task SubmitAttendanceAsync(Services.AttendanceBatchRequest request, Guid orgId);
-    Task<Services.StudentReportCard> GetStudentReportCardAsync(Guid studentId, int year);
-    Task<List<Services.StudentAttendanceSummary>> GetAttendanceSummaryAsync(Guid classId, Guid subjectId, int year, int? month);
 }
 
 public interface IFinancialService
@@ -53,7 +47,6 @@ public interface ISchoolYearService
     Task<Services.SchoolYearResponse?> GetByIdAsync(Guid id);
     Task<Services.SchoolYearResponse> CreateAsync(Services.CreateSchoolYearRequest request);
     Task UpdateStatusAsync(Guid id, string status);
-    Task<Services.TransferResponse> TransferAsync(Services.TransferRequest request, Guid orgId);
 }
 
 public interface IEnrollmentService
