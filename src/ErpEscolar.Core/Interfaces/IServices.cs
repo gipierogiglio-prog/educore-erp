@@ -53,7 +53,7 @@ public interface ISchoolYearService
     Task<Services.SchoolYearResponse?> GetByIdAsync(Guid id);
     Task<Services.SchoolYearResponse> CreateAsync(Services.CreateSchoolYearRequest request);
     Task UpdateStatusAsync(Guid id, string status);
-    Task<TransferResponse> TransferAsync(TransferRequest request, Guid orgId);
+    Task<Services.TransferResponse> TransferAsync(Services.TransferRequest request, Guid orgId);
 }
 
 public interface IEnrollmentService
@@ -80,39 +80,39 @@ public interface ICourseService
 
 public interface IStaffService
 {
-    Task<List<StaffResponse>> GetAllAsync(Guid orgId);
-    Task<StaffResponse?> GetByIdAsync(Guid id);
-    Task<StaffResponse> CreateAsync(CreateStaffRequest request, Guid orgId);
-    Task<StaffResponse> UpdateAsync(Guid id, UpdateStaffRequest request, Guid orgId);
+    Task<List<Services.StaffResponse>> GetAllAsync(Guid orgId);
+    Task<Services.StaffResponse?> GetByIdAsync(Guid id);
+    Task<Services.StaffResponse> CreateAsync(Services.CreateStaffRequest request, Guid orgId);
+    Task<Services.StaffResponse> UpdateAsync(Guid id, Services.UpdateStaffRequest request, Guid orgId);
     Task ToggleStatusAsync(Guid id);
 }
 
 public interface ILessonPlanService
 {
-    Task<List<LessonPlanResponse>> GetByClassAsync(Guid classId, Guid? subjectId, int? month, int? year);
-    Task<LessonPlanResponse> CreateAsync(CreateLessonPlanRequest request, Guid orgId, Guid teacherId);
-    Task<LessonPlanResponse> UpdateAsync(Guid id, UpdateLessonPlanRequest request);
+    Task<List<Services.LessonPlanResponse>> GetByClassAsync(Guid classId, Guid? subjectId, int? month, int? year);
+    Task<Services.LessonPlanResponse> CreateAsync(Services.CreateLessonPlanRequest request, Guid orgId, Guid teacherId);
+    Task<Services.LessonPlanResponse> UpdateAsync(Guid id, Services.UpdateLessonPlanRequest request);
     Task DeleteAsync(Guid id);
 }
 
 public interface IAssessmentService
 {
-    Task<List<AssessmentResponse>> GetByClassAsync(Guid classId, int? bimester, int? year);
-    Task<AssessmentResponse> CreateAsync(CreateAssessmentRequest request, Guid orgId);
-    Task SubmitGradesAsync(Guid assessmentId, List<SubmitGradeItem> grades);
-    Task<List<AssessmentGradeResponse>> GetGradesAsync(Guid assessmentId);
+    Task<List<Services.AssessmentResponse>> GetByClassAsync(Guid classId, int? bimester, int? year);
+    Task<Services.AssessmentResponse> CreateAsync(Services.CreateAssessmentRequest request, Guid orgId);
+    Task SubmitGradesAsync(Guid assessmentId, List<Services.SubmitGradeItem> grades);
+    Task<List<Services.AssessmentGradeResponse>> GetGradesAsync(Guid assessmentId);
 }
 
 public interface IScheduleService
 {
-    Task<List<ScheduleResponse>> GetByClassAsync(Guid classId);
-    Task<List<ScheduleResponse>> GetByTeacherAsync(Guid teacherId);
-    Task<ScheduleResponse> CreateAsync(CreateScheduleRequest request, Guid orgId);
+    Task<List<Services.ScheduleResponse>> GetByClassAsync(Guid classId);
+    Task<List<Services.ScheduleResponse>> GetByTeacherAsync(Guid teacherId);
+    Task<Services.ScheduleResponse> CreateAsync(Services.CreateScheduleRequest request, Guid orgId);
     Task DeleteAsync(Guid id);
 }
 
 public interface IGradingRuleService
 {
-    Task<GradingRuleResponse?> GetAsync(Guid orgId);
-    Task<GradingRuleResponse> SaveAsync(UpsertGradingRuleRequest request, Guid orgId);
+    Task<Services.GradingRuleResponse?> GetAsync(Guid orgId);
+    Task<Services.GradingRuleResponse> SaveAsync(Services.UpsertGradingRuleRequest request, Guid orgId);
 }
