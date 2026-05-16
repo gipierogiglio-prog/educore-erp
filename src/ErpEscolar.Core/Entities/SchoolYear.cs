@@ -11,5 +11,4 @@ public class SchoolYear
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     // Navigation
-    public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
 }
