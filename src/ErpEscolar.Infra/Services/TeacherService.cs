@@ -52,6 +52,7 @@ public class TeacherService : ITeacherService
         var teacher = new Teacher
         {
             UserId = user.Id,
+            OrganizationId = orgId,
             Specialization = request.Specialization,
         };
 
