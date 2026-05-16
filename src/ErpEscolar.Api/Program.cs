@@ -1,4 +1,3 @@
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using ErpEscolar.Core.Interfaces;
 using ErpEscolar.Core.Services;
 using ErpEscolar.Infra.Data;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
 // Database - PostgreSQL (ou InMemory como fallback)
@@ -24,7 +23,6 @@ else
     builder.Services.AddDbContext<AppDbContext>(options =>
         options.UseInMemoryDatabase("EduCoreDB"));
 }
-
 // Auth
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ErpEscolar-SuperSecret-Key-2024!@#$%";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -41,9 +39,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
         };
     });
-
 builder.Services.AddAuthorization();
-
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
@@ -60,11 +56,9 @@ builder.Services.AddScoped<IAssessmentRepository, AssessmentRepository>();
 builder.Services.AddScoped<ILessonPlanRepository, LessonPlanRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
-
 // Teachers
 builder.Services.AddScoped<ITeacherService, TeacherService>();
 builder.Services.AddScoped<IAcademicService, AcademicService>();
@@ -74,21 +68,17 @@ builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IAssessmentService, AssessmentService>();
 builder.Services.AddScoped<ILessonPlanService, LessonPlanService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
-
 // SchoolYear
 builder.Services.AddScoped<ISchoolYearRepository, SchoolYearRepository>();
 builder.Services.AddScoped<ISchoolYearService, SchoolYearService>();
-
 // Permissions
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionGroupRepository, PermissionGroupRepository>();
 builder.Services.AddScoped<IUserPermissionRepository, UserPermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
-
 // Enrollment
 builder.Services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
-
 // CORS
 builder.Services.AddCors(options =>
 {
@@ -97,7 +87,6 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
-
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -116,12 +105,9 @@ builder.Services.AddSwaggerGen(c =>
         { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } }, Array.Empty<string>() }
     });
 });
-
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
-
 var app = builder.Build();
-
 // Auto-migrate database + seed
 using (var scope = app.Services.CreateScope())
 {
@@ -129,7 +115,6 @@ using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         db.Database.EnsureCreated();
-
         // Seed default organization
         var defaultOrg = db.Organizations.FirstOrDefault();
         if (defaultOrg == null)
@@ -143,7 +128,6 @@ using (var scope = app.Services.CreateScope())
             db.Organizations.Add(defaultOrg);
             db.SaveChanges();
         }
-
         // Seed admin user
         if (!db.Users.Any())
         {
@@ -156,7 +140,6 @@ using (var scope = app.Services.CreateScope())
                 OrganizationId = defaultOrg.Id,
             };
             db.Users.Add(admin);
-
             // Seed demo teacher
             var teacher = new ErpEscolar.Core.Entities.User
             {
@@ -176,7 +159,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogWarning(ex, "Database seed skipped (non-critical)");
     }
 }
-
 // Seed default permissions (separado)
 try
 {
@@ -193,12 +175,10 @@ catch (Exception ex)
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
     logger.LogWarning(ex, "Seed de permissoes skipped");
 }
-
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
 app.Run();
