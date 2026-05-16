@@ -1,3 +1,4 @@
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 using ErpEscolar.Core.Interfaces;
 using ErpEscolar.Core.Services;
 using ErpEscolar.Infra.Data;
